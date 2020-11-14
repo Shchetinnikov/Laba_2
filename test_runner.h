@@ -40,7 +40,7 @@ public:
 		if (fail_count > 0) {
 			SetConsoleTextAttribute(HCONSOLE, (WORD)((Red << 4) | White));
 			
-			cerr << endl << fail_count << " unit tests failed. Terminate";
+			cerr << endl << fail_count << " unit tests failed. Program is completed";
 			
 			SetConsoleTextAttribute(HCONSOLE, (WORD)((Black << 4) | White));
 			exit(1);

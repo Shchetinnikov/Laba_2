@@ -20,7 +20,7 @@ int AskSequenceLength()
 	cin >> length;
 	if (length <= 0)
 	{
-		throw OperationError(0, __FILE__, __LINE__);
+		throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
 	}
 	return length;
 }
@@ -37,7 +37,7 @@ void SetRange(T& vmin, T& vmax)
 	cin >> vmax;
 	if (vmax < vmin)
 	{
-		throw OperationError(0, __FILE__, __LINE__);
+		throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
 	}
 }
 

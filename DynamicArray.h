@@ -32,9 +32,9 @@ public:
 template <class T>
 DynamicArray<T> ::DynamicArray(T* items, const int size)
 {
-	if (!items)
-		throw OperationError(0, __FILE__, __LINE__);
-	int actualSize = size > 0 ? size : 1;
+	if (!items || size < 1)
+		throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
+	int actualSize = size;
 	this->items = new T[actualSize];
 	this->itemsCheck = new bool[actualSize];
 	for (int i = 0; i < actualSize; i++)
@@ -49,7 +49,7 @@ template <class T>
 DynamicArray<T> ::DynamicArray(const int size)
 {
 	if (size < 0)
-		throw OperationError(0, __FILE__, __LINE__);
+		throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
 
 	this->size = size;
 	this->items = new T[size];
@@ -62,7 +62,7 @@ template <class T>
 DynamicArray<T> ::DynamicArray(const DynamicArray<T>& array)
 {
 	if (array.size < 0 || !array.items)
-		throw IndexOutOfRange(1, __FILE__, __LINE__);
+		throw IndexOutOfRange("***IndexError: array is empty or index is out of range***", __FILE__, __LINE__);
 	this->items = new T[array.size];
 	this->itemsCheck = new bool[array.size];
 	for (int i = 0; i < array.size; i++)
@@ -87,17 +87,17 @@ template <class T>
 T DynamicArray<T> ::Get(const int index) const
 {
 	if (index < 0 || index >= this->size || !this->size || !this->items)
-		throw IndexOutOfRange(1, __FILE__, __LINE__);
+		throw IndexOutOfRange("***IndexError: array is empty or index is out of range***", __FILE__, __LINE__);
 	if (this->itemsCheck[index])
 		return this->items[index];
-	throw NoneValue(1, __FILE__, __LINE__);
+	throw NoneValue("***IndexError: array is empty or index is out of range***", __FILE__, __LINE__);
 };
 
 template <class T>
 bool DynamicArray<T> ::HasValue(const int index) const
 {
 	if (index < 0 || index >= this->size || !this->size || !this->items)
-		throw IndexOutOfRange(1, __FILE__, __LINE__);
+		throw IndexOutOfRange("***IndexError: array is empty or index is out of range***", __FILE__, __LINE__);
 	return this->itemsCheck[index];
 };
 
@@ -106,7 +106,7 @@ template <class T>
 bool DynamicArray<T> ::TryGetValue(const int index, T& value) const
 {
 	if (index < 0 || index >= this->size || !this->size || !this->items)
-		throw IndexOutOfRange(1, __FILE__, __LINE__);
+		throw IndexOutOfRange("***IndexError: array is empty or index is out of range***", __FILE__, __LINE__);
 	if (!this->itemsCheck[index])
 		return false;
 	value = this->items[index];
@@ -117,7 +117,7 @@ template <class T>
 void DynamicArray<T> ::Set(const int index, const T value)
 {
 	if (index < 0 || index >= this->size || !this->size || !this->items)
-		throw IndexOutOfRange(1, __FILE__, __LINE__);
+		throw IndexOutOfRange("***IndexError: array is empty or index is out of range***", __FILE__, __LINE__);
 	this->items[index] = value;
 	this->itemsCheck[index] = true;
 };
@@ -126,7 +126,7 @@ template <class T>
 void DynamicArray<T> ::Resize(const int newSize)
 {
 	if (newSize <= 0)
-		throw OperationError(0, __FILE__, __LINE__);
+		throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
 	if (newSize == this->size)
 		return;
 	T* new_items = new T[newSize];

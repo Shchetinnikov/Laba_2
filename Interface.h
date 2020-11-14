@@ -52,7 +52,7 @@ void ShowMenu()
 	cout << " Choose one of the item:" << endl;
 	cout << "1. Sorting" << endl;
 	cout << "2. Test program" << endl;
-	cout << "3. Terminate" << endl;
+	cout << "3. Exit" << endl;
 	AccessInput();
 
 	SetConsoleTextAttribute(HCONSOLE, (WORD)((Black << 4) | White));
@@ -69,7 +69,7 @@ void ShowSortMenu()
 	cout << "1. Sorters" << endl;
 	cout << "2. Compare sorters" << endl;
 	cout << "3. Back" << endl;
-	cout << "4. Terminate" << endl;
+	cout << "4. Exit" << endl;
 	AccessInput();
 
 	SetConsoleTextAttribute(HCONSOLE, (WORD)((Black << 4) | White));
@@ -87,7 +87,7 @@ void ShowSortersMenu()
 	cout << "2. TreeSorter" << endl;
 	cout << "3. ShellSorter" << endl;
 	cout << "4. Back" << endl;
-	cout << "5. Terminate" << endl;
+	cout << "5. Exit" << endl;
 	AccessInput();
 
 	SetConsoleTextAttribute(HCONSOLE, (WORD)((Black << 4) | White));
@@ -164,26 +164,5 @@ int AskOrder()
 		return 0;
 	if (answer == '1')
 		return 1;
-	throw OperationError(0, __FILE__, __LINE__);
+	throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
 }
-
-
-bool AskTimer()
-{
-	char answer;
-	cout << endl << " Would you like to measure the sorting run time? (y/n):" << endl;
-	AccessInput();
-	cin >> answer;
-	switch (answer)
-	{
-	case 'y':
-		return true;
-		break;
-	case 'n':
-		return false;
-		break;
-	default:
-		throw OperationError(0, __FILE__, __LINE__);
-	}
-}
-

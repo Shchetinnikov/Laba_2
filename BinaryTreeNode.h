@@ -45,7 +45,6 @@ public:
 template<class U, class T>
 BinaryTreeNode<U, T> ::BinaryTreeNode(const U& key) : left(nullptr), right(nullptr)
 {
-	//this->item.data = NULL;
 	this->item.key = key;
 }
 

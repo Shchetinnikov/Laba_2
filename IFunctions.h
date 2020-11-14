@@ -28,11 +28,11 @@ void Menu(string& state, char choice)
 		TestAll();
 		break;
 	case '3':
-		PrintConclusion("\nPROGRAM IS TERMINATED");
+		PrintConclusion("\nPROGRAM IS COMPLETED");
 		exit(0);
 		break;
 	default:
-		throw OperationError(0, __FILE__, __LINE__);
+		throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
 	}
 }
 
@@ -51,10 +51,10 @@ void SortMenu(string& state, char choice)
 		state = "Menu";
 		break;
 	case '4':
-		PrintConclusion("\nPROGRAM IS TERMINATED");
+		PrintConclusion("\nPROGRAM IS COMPLETED");
 		exit(0);
 	default:
-		throw OperationError(0, __FILE__, __LINE__);
+		throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
 	}
 }
 
@@ -76,10 +76,10 @@ void SortersMenu(string& state, char choice)
 		state = "SortMenu";
 		break;
 	case '5':
-		PrintConclusion("\nPROGRAM IS TERMINATED");
+		PrintConclusion("\nPROGRAM IS COMPLETED");
 		exit(0);
 	default:
-		throw OperationError(0, __FILE__, __LINE__);
+		throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
 	}
 
 }
@@ -90,7 +90,7 @@ char ChooseSequence()
 	SequenceClasses();
 	cin >> choice;
 	if (choice < '1' || choice > '2')
-		throw OperationError(0, __FILE__, __LINE__);
+		throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
 	return choice;
 }
 
@@ -100,7 +100,7 @@ char ChooseType()
 	TypesItems();
 	cin >> choice;
 	if (choice < '1' || choice > '5')
-		throw OperationError(0, __FILE__, __LINE__);
+		throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
 	return choice;
 }
 
@@ -126,7 +126,7 @@ void GetSequence(Sequence<T>& input)
 		cin >> input;
 		break;
 	default:
-		throw OperationError(0, __FILE__, __LINE__);
+		throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
 	}
 	return;
 }
@@ -149,7 +149,7 @@ void GetSequenceToCompare(Sequence<T>& input)
 		ConstantSequence(input);
 		break;
 	default:
-		throw OperationError(0, __FILE__, __LINE__);
+		throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
 	}
 	return;
 }

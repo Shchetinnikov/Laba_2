@@ -495,7 +495,7 @@ void CopyToTest()
 
 void ShakerSorterTest()
 {
-	ShakerSorter<int> sorter;
+	ShakerSorter<int> sorter(AscendingComparer<int>);
 	// Пустая послед-ть
 	{
 		Sequence<int>* origin = new ListSequence<int>();
@@ -552,7 +552,7 @@ void ShakerSorterTest()
 
 void TreeSorterTest()
 {
-	TreeSorter<int> sorter;
+	TreeSorter<int> sorter("LNR");
 	// Пустая послед-ть
 	{
 		Sequence<int>* origin = new ListSequence<int>();
@@ -613,7 +613,7 @@ void TreeSorterTest()
 
 void ShellSorterTest()
 {
-	ShellSorter<int> sorter;
+	ShellSorter<int> sorter(AscendingComparer<int>);
 	// Пустая послед-ть
 	{
 		Sequence<int>* origin = new ListSequence<int>();

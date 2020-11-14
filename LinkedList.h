@@ -49,7 +49,7 @@ template <class T>
 LinkedList<T> ::LinkedList(T* items, const int size)
 {
 	if (!items)
-		throw OperationError(0, __FILE__, __LINE__);
+		throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
 	int actualSize = size >= 0 ? size : 0;
 	this->size = actualSize;
 	if (!actualSize)
@@ -101,7 +101,7 @@ template <class T>
 LinkedList<T> ::LinkedList(const LinkedList<T>& list)
 {
 	if (!list.size || !list.pFirst)
-		throw IndexOutOfRange(2, __FILE__, __LINE__);
+		throw IndexOutOfRange("***IndexError: list is empty or index is out of range***", __FILE__, __LINE__);
 	this->size = list.size;
 	Node<T>* ptr1 = list.pFirst;
 	Node<T>* ptr2 = list.pFirst->pNext;
@@ -149,9 +149,9 @@ template <class T>
 T LinkedList<T> ::GetFirst() const
 {
 	if (!this->size || !this->pFirst)
-		throw IndexOutOfRange(2, __FILE__, __LINE__);
+		throw IndexOutOfRange("***IndexError: list is empty or index is out of range***", __FILE__, __LINE__);
 	if (!this->pFirst->dataCheck)
-		throw NoneValue(1, __FILE__, __LINE__);
+		throw NoneValue("***IndexError: array is empty or index is out of range***", __FILE__, __LINE__);
 	return this->pFirst->data;
 };
 
@@ -159,14 +159,14 @@ template <class T>
 T LinkedList<T> ::GetLast() const
 {
 	if (!this->size || !this->pFirst)
-		throw IndexOutOfRange(2, __FILE__, __LINE__);
+		throw IndexOutOfRange("***IndexError: list is empty or index is out of range***", __FILE__, __LINE__);
 	Node<T>* ptr = pFirst;
 	for (int i = 1; i < size; i++)
 	{
 		ptr = ptr->pNext;
 	};
 	if (!ptr->dataCheck)
-		throw NoneValue(3, __FILE__, __LINE__);
+		throw NoneValue("***ValueError: value is not defined***", __FILE__, __LINE__);
 	return ptr->data;
 };
 
@@ -174,14 +174,14 @@ template <class T>
 T LinkedList<T> ::Get(const int index) const
 {
 	if (index < 0 || index >= this->size || !this->size || !this->pFirst)
-		throw IndexOutOfRange(2, __FILE__, __LINE__);
+		throw IndexOutOfRange("***IndexError: list is empty or index is out of range***", __FILE__, __LINE__);
 	Node<T>* ptr = this->pFirst;
 	for (int i = 1; i <= index; i++)
 	{
 		ptr = ptr->pNext;
 	};
 	if (!ptr->dataCheck)
-		throw NoneValue(3, __FILE__, __LINE__);
+		throw NoneValue("***ValueError: value is not defined***", __FILE__, __LINE__);
 	return ptr->data;
 };
 
@@ -189,7 +189,7 @@ template <class T>
 bool LinkedList<T> ::HasValue(const int index) const
 {
 	if (index < 0 || index >= this->size || !this->size || !this->pFirst)
-		throw IndexOutOfRange(2, __FILE__, __LINE__);
+		throw IndexOutOfRange("***IndexError: list is empty or index is out of range***", __FILE__, __LINE__);
 	Node<T>* ptr = this->pFirst;
 	for (int i = 1; i <= index; i++)
 		ptr = ptr->pNext;
@@ -202,7 +202,7 @@ template <class T>
 bool LinkedList<T> ::TryGetValue(const int index, T& value) const
 {
 	if (index < 0 || index >= this->size || !this->size || !this->pFirst)
-		throw IndexOutOfRange(2, __FILE__, __LINE__);
+		throw IndexOutOfRange("***IndexError: list is empty or index is out of range***", __FILE__, __LINE__);
 	if (!this->HasValue(index))
 		return false;
 	value = this->Get(index);
@@ -213,7 +213,7 @@ template <class T>
 LinkedList<T>* LinkedList<T> ::GetSubList(const int startIndex, const int endIndex) const
 {
 	if (startIndex < 0 || startIndex > endIndex || endIndex >= this->size || !this->size || !this->pFirst)
-		throw new IndexOutOfRange(2, __FILE__, __LINE__);
+		throw new IndexOutOfRange("***IndexError: list is empty or index is out of range***", __FILE__, __LINE__);
 	LinkedList<T>* sublist = new LinkedList<T>(endIndex - startIndex + 1);
 	sublist->size = endIndex - startIndex + 1;
 	for (int i = startIndex; i <= endIndex; i++)
@@ -227,7 +227,7 @@ template <class T>
 void LinkedList<T> ::Prepend(const T value)
 {
 	if (this->size < 0)
-		throw IndexOutOfRange(2, __FILE__, __LINE__);
+		throw IndexOutOfRange("***IndexError: list is empty or index is out of range***", __FILE__, __LINE__);
 	if (!this->size)
 	{
 		pFirst = new Node<T>;
@@ -249,7 +249,7 @@ template <class T>
 void LinkedList<T> ::Append(const T value)
 {
 	if (this->size < 0)
-		throw IndexOutOfRange(2, __FILE__, __LINE__);
+		throw IndexOutOfRange("***IndexError: list is empty or index is out of range***", __FILE__, __LINE__);
 	if (!this->size)
 	{
 		pFirst = new Node<T>;
@@ -276,7 +276,7 @@ template <class T>
 void LinkedList<T> ::Set(const int index, const T value)
 {
 	if (index < 0 || index >= this->size || !this->size || !this->pFirst)
-		throw IndexOutOfRange(2, __FILE__, __LINE__);
+		throw IndexOutOfRange("***IndexError: list is empty or index is out of range***", __FILE__, __LINE__);
 	Node<T>* ptr = this->pFirst;
 	for (int i = 1; i <= index; i++)
 	{
@@ -290,7 +290,7 @@ template <class T>
 void LinkedList<T> ::InsertAt(const int index, const T value)
 {
 	if (index < 0 || index >= this->size || !this->size || !this->pFirst)
-		throw IndexOutOfRange(2, __FILE__, __LINE__);
+		throw IndexOutOfRange("***IndexError: list is empty or index is out of range***", __FILE__, __LINE__);
 	this->size++;
 	Node<T>* ptr = new Node<T>;
 	if (index == 0)
@@ -316,7 +316,7 @@ template <class T>
 void LinkedList<T> ::RemoveAt(const int index)
 {
 	if (index < 0 || index >= this->size || !this->size || !this->pFirst)
-		throw IndexOutOfRange(2, __FILE__, __LINE__);
+		throw IndexOutOfRange("***IndexError: list is empty or index is out of range***", __FILE__, __LINE__);
 	Node<T>* ptr = this->pFirst;
 	if (index == 0)
 	{
@@ -340,7 +340,7 @@ template <class T>
 void LinkedList<T> ::Remove(T value)
 {
 	if (!this->size || !this->pFirst)
-		throw IndexOutOfRange(2, __FILE__, __LINE__);
+		throw IndexOutOfRange("***IndexError: list is empty or index is out of range***", __FILE__, __LINE__);
 	int flag = 0;
 	Node<T>* ptr = this->pFirst;
 	for (int i = 0; i < this->size; i++)
@@ -354,14 +354,14 @@ void LinkedList<T> ::Remove(T value)
 		ptr = ptr->pNext;
 	};
 	if (!flag)
-		throw NoneValue(5, __FILE__, __LINE__);
+		throw NoneValue("***ValueError: there is not value of argument in the list***", __FILE__, __LINE__);
 };
 
 template <class T>
 void LinkedList<T> ::RemoveAll(T value)
 {
 	if (!this->size || !this->pFirst)
-		throw IndexOutOfRange(2, __FILE__, __LINE__);
+		throw IndexOutOfRange("***IndexError: list is empty or index is out of range***", __FILE__, __LINE__);
 	int flag = 0;
 	try {
 		int num = this->size;
@@ -374,7 +374,7 @@ void LinkedList<T> ::RemoveAll(T value)
 	catch (NoneValue& e)
 	{
 		if (!flag)
-			throw NoneValue(5, __FILE__, __LINE__);
+			throw NoneValue("***ValueError: there is not value of argument in the list***", __FILE__, __LINE__);
 	}
 };
 
@@ -382,7 +382,7 @@ template <class T>
 LinkedList<T>* LinkedList<T> ::Concat(const LinkedList<T>& other) const
 {
 	if (!this->size || !this->pFirst || !other.size || !other.pFirst)
-		throw IndexOutOfRange(2, __FILE__, __LINE__);
+		throw IndexOutOfRange("***IndexError: list is empty or index is out of range***", __FILE__, __LINE__);
 	LinkedList<T>* list = new LinkedList<T>(this->size + other.size);
 	int index;
 	for (index = 0; index < this->size; index++)

@@ -7,11 +7,6 @@
 
 using namespace std;
 
-//#include "BinaryTreeNode.h"
-//#include "BinaryTree.h"
-//#include "Queue.hpp"
-//#include "Complex.h"
-
 
 int main()
 {
@@ -28,7 +23,10 @@ int main()
         }
         catch (Exception error) 
         {   
-            PrintError(error);
+                SetConsoleTextAttribute(HCONSOLE, (WORD)((Red << 4) | White));
+                cerr << endl << error.report();
+                SetConsoleTextAttribute(HCONSOLE, (WORD)((Black << 4) | White));
+                cout << endl;
         }
     }
    return 0;

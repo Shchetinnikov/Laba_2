@@ -64,18 +64,6 @@ void PrintConclusion(const string& text)
 }
 
 
-void PrintError(Exception& error)
-{
-	SetConsoleTextAttribute(HCONSOLE, (WORD)((Red << 4) | White));
-
-	cerr << endl << error.report();
-
-	SetConsoleTextAttribute(HCONSOLE, (WORD)((Black << 4) | White));
-
-	cout << endl;
-}
-
-
 void PrintSubheading(const string& text)
 {
 	SetConsoleTextAttribute(HCONSOLE, (WORD)((Black << 4) | Cyan));

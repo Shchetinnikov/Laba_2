@@ -37,13 +37,13 @@ char* CompareSortersItems()
 		if (*(pair + i) < '1' || *(pair + i) > '3')
 		{
 			in.str("");
-			throw OperationError(0, __FILE__, __LINE__);
+			throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
 		}
 	}
 	if (*(pair) == *(pair + 1))
 	{
 		in.str("");
-		throw OperationError(0, __FILE__, __LINE__);
+		throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
 	}
 	return pair;
 }
@@ -53,9 +53,6 @@ template<class T>
 void CompareSorters(ISorter<T>* sorter1, ISorter<T>* sorter2, Sequence<T>* input)
 {
 	Sequence<T>* copy = input->Copy();
-	int order = AskOrder();
-	sorter1->SetOrder(order);
-	sorter2->SetOrder(order);
 
 	PrintHeading("\nFirst sorter output:");
 	Sort(input, sorter1);
@@ -69,53 +66,106 @@ void CompareSorters(ISorter<T>* sorter1, ISorter<T>* sorter2, Sequence<T>* input
 
 
 template<class T>
-ISorter<T>* GetFirstSorter(const char* pair, Sequence<T>* input)
+ISorter<T>* GetFirstSorter(const char* pair, const int order)
 {
+	ISorter<T>* sorter;
 	switch (*(pair))
 	{
 	case '1':
 	{
-		return new ShakerSorter<T>();
-		break;
+		if (order)
+		{
+			ISorter<T>* sorter = new ShakerSorter<T>(AscendingComparer<T>);
+			return sorter;
+
+		}
+		else
+		{
+			ISorter<T>* sorter = new ShakerSorter<T>(DescendingComparer<T>);
+			return sorter;
+		}
+		
 	}
 	case '2':
 	{
-		return new TreeSorter<T>();
-		break;
+		if (order)
+		{
+			ISorter<T>* sorter = new TreeSorter<T>("LNR");
+			return sorter;
+		}
+		else
+		{
+			ISorter<T>* sorter = new TreeSorter<T>("RNL");
+			return sorter;
+		}
+
 	}
 	case '3':
 	{
-		return new ShellSorter<T>();
-		break;
+		if (order)
+		{
+			ISorter<T>* sorter = new ShellSorter<T>(AscendingComparer<T>);
+			return sorter;
+		}
+		else
+		{
+			ISorter<T>* sorter = new ShellSorter<T>(DescendingComparer<T>);
+			return sorter;
+		}
 	}
 	default:
-		throw OperationError(0, __FILE__, __LINE__);
+		throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
 	}
 }
 
 
 template<class T>
-ISorter<T>* GetSecondSorter(const char* pair, Sequence<T>* input)
+ISorter<T>* GetSecondSorter(const char* pair, const int order)
 {
+	ISorter<T>* sorter;
 	switch (*(pair + 1))
 	{
 	case '1':
 	{
-		return new ShakerSorter<T>();
-		break;
+		if (order)
+		{
+			ISorter<T>* sorter = new ShakerSorter<T>(AscendingComparer<T>);
+			return sorter;
+		}
+		else
+		{
+			ISorter<T>* sorter = new ShakerSorter<T>(DescendingComparer<T>);
+			return sorter;
+		}
 	}
 	case '2':
 	{
-		return new TreeSorter<T>();
-		break;
+		if (order)
+		{
+			ISorter<T>* sorter = new TreeSorter<T>("LNR");
+			return sorter;
+		}
+		else
+		{
+			ISorter<T>* sorter = new TreeSorter<T>("RNL");
+			return sorter;
+		}
 	}
 	case '3':
 	{
-		return new ShellSorter<T>();
-		break;
+		if (order)
+		{
+			ISorter<T>* sorter = new ShellSorter<T>(AscendingComparer<T>);
+			return sorter;
+		}
+		else
+		{
+			ISorter<T>* sorter = new ShellSorter<T>(DescendingComparer<T>);
+			return sorter;
+		}
 	}
 	default:
-		throw OperationError(0, __FILE__, __LINE__);
+		throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
 	}
 }
 
@@ -123,8 +173,9 @@ ISorter<T>* GetSecondSorter(const char* pair, Sequence<T>* input)
 template<class T>
 void GetSortersAndCompare(const char* pair, Sequence<T>* input)
 {
-	ISorter<T>* sorter1 = GetFirstSorter(pair, input);
-	ISorter<T>* sorter2 = GetSecondSorter(pair, input);
+	int order = AskOrder();
+	ISorter<T>* sorter1 = GetFirstSorter<T>(pair, order);
+	ISorter<T>* sorter2 = GetSecondSorter<T>(pair, order);
 
 	CompareSorters(sorter1, sorter2, input);
 	delete sorter1;
@@ -153,7 +204,7 @@ void Compare(char* pair)
 		break;
 	}
 	default:
-		throw OperationError(0, __FILE__, __LINE__);
+		throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
 	}
 	
 }
@@ -193,6 +244,6 @@ void Compare()
 		break;
 	}
 	default:
-		throw OperationError(0, __FILE__, __LINE__);
+		throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
 	}
 }

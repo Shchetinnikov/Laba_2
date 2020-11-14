@@ -1,9 +1,9 @@
 #pragma once
 
+#include <exception>
 #include <iostream>
 #include <string>
 
-#include "Exception.h"
 #include "Sequence.h"
 #include "ListSequence.h"
 #include "BinaryTreeNode.h"
@@ -162,7 +162,7 @@ bool BinaryTree<U, T> ::FindSubTree(BinaryTree<U, T>* subtree) const
 {
 	if (!subtree->root)
 	{
-		throw OperationError(0, __FILE__, __LINE__);
+		throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
 	}
 	if (!this->root)
 	{
@@ -216,7 +216,7 @@ void BinaryTree<U, T> ::Round(BinaryTreeNode<U, T>* start, void (*visit)(BinaryT
 			Round(start->GetRight(), visit, order);
 			break;
 		default:
-			throw OperationError(0, __FILE__, __LINE__);
+			throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
 		}
 }
 
@@ -225,7 +225,7 @@ template <class U, class T>
 void BinaryTree<U, T> ::Insert(BinaryTreeNode<U, T>* node)
 {
 	if (!node)
-		throw OperationError(0, __FILE__, __LINE__);
+		throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
 	if (!this->root)
 	{
 		this->root = new BinaryTreeNode<U, T>(node->GetTreeNode().key, node->GetTreeNode().data,
@@ -407,7 +407,7 @@ void BinaryTree<U, T> ::Thread(const string order)
 {
 	if (!this->root)
 	{
-		throw NoneValue(7, __FILE__, __LINE__);
+		throw NoneValue("***ValueError: there is not value of argument in the binary tree***", __FILE__, __LINE__);
 	}
 	Sequence<BinaryTreeNode<U, T>*>* seq = new ListSequence<BinaryTreeNode<U, T>*>();
 	ThreadRecursive(this->root, seq, order);
@@ -508,7 +508,7 @@ BinaryTreeNode<U, T>* BinaryTree<U, T>::MapRecursive(BinaryTreeNode<U, T>* node,
 			new_node->SetRight(MapRecursive(node->GetRight(), mfun));
 			break;
 		default:
-			throw OperationError(0, __FILE__, __LINE__);
+			throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
 		}
 	}
 	return new_node;
@@ -538,7 +538,7 @@ void BinaryTree<U, T>::WhereRecursive(BinaryTreeNode<U, T>* node, BinaryTree<U, 
 			WhereRecursive(node->GetRight(), result, wfun);
 			break;
 		default:
-			throw OperationError(0, __FILE__, __LINE__);
+			throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
 		}
 }
 
@@ -561,7 +561,7 @@ void BinaryTree<U, T>::ThreadRecursive(BinaryTreeNode<U, T>* node, Sequence<Bina
 			ThreadRecursive(node->GetRight(), seq, order);
 			break;
 		default:
-			throw OperationError(0, __FILE__, __LINE__);
+			throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
 		}
 	}
 }

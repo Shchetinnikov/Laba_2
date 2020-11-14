@@ -3,13 +3,16 @@
 #include <iostream>
 
 #include "Exception.h"
+#include "Iterators.h"
 
 using namespace std;
 
 	
 template <class T>
-class Sequence {
+class Sequence : public IIterable<T>
+{
 public:
+	virtual int GetCapacity() const = 0;
 	virtual int GetLength() const = 0;
 	virtual T GetFirst() const = 0;
 	virtual T GetLast() const = 0;
@@ -35,8 +38,15 @@ public:
 	
 	template<class T>
 	friend void operator>> (istream& in, Sequence<T>& sequence);
+
+	T operator[] (const int index);
 };
 
+template<class T>
+T Sequence<T>:: operator[](const int index)
+{
+	return this->Get(index);
+}
 
 template<class T>
 bool operator!= (const Sequence<T>& lhs, const Sequence<T>& rhs)
@@ -75,7 +85,7 @@ void operator>> (istream& in, Sequence<T>& sequence)
 {
 	if (sequence.GetLength() != 0)
 	{
-		throw OperationError(0, __FILE__, __LINE__);
+		throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
 	}
 	char flag;
 	T data;
@@ -102,6 +112,7 @@ void operator>> (istream& in, Sequence<T>& sequence)
 	}
 	else
 	{
-		throw OperationError(0, __FILE__, __LINE__);
+		throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
 	}
 }
+

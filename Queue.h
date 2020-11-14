@@ -46,7 +46,7 @@
 //Queue<T> ::Queue(T* items, const int count, string sequence)
 //{
 //	if (!items || count <= 0 || (sequence != "array" && sequence != "list"))
-//		throw OperationError();
+//		throw InvalidArguments();
 //	if (sequence == "list")
 //	{
 //		this->data = new ListSequence<T>(items, count);
@@ -75,7 +75,7 @@
 //Queue<T> ::Queue(const Queue<T>& other, string sequence)
 //{
 //	if (!other.data->GetLength())
-//		throw OperationError();
+//		throw InvalidArguments();
 //
 //	if (sequence == "list")
 //	{
@@ -122,7 +122,7 @@
 //Queue<T>* Queue<T> ::Map(T(*mfun)(T)) const
 //{
 //	if (!this->data || !this->data->GetLength())
-//		throw IndexOutOfRange(1);
+//		throw IndexOutOfRange("***IndexError: array is empty or index is out of range***");
 //	Queue<T>* queue = new Queue<T>(*(this), "list");
 //	for (int i = 0; i < queue->data->GetLength(); i++)
 //	{
@@ -135,7 +135,7 @@
 //Queue<T>* Queue<T> ::Where(bool (*wfun)(T)) const
 //{
 //	if (!this->data || !this->data->GetLength())
-//		throw IndexOutOfRange(1);
+//		throw IndexOutOfRange("***IndexError: array is empty or index is out of range***");
 //	Queue<T>* queue = new Queue<T>();
 //	for (int i = 0; i < this->data->GetLength(); i++)
 //		if (wfun(this->data->Get(i)))
@@ -149,7 +149,7 @@
 //T Queue<T> ::Reduce(T(*rfun)(T, T), T startvalue) const
 //{
 //	if (!this->data || !this->data->GetLength())
-//		throw IndexOutOfRange(1);
+//		throw IndexOutOfRange("***IndexError: array is empty or index is out of range***");
 //	for (int i = this->data->GetLength() - 1; i >= 0; i--)
 //	{
 //		startvalue = rfun(this->data->Get(i), startvalue);
@@ -161,7 +161,7 @@
 //Queue<T>* Queue<T> ::Concat(const Queue<T>& other) const
 //{
 //	if (!this->data || !this->data->GetLength() || !other.data->GetLength() || !other.data)
-//		throw IndexOutOfRange(1);
+//		throw IndexOutOfRange("***IndexError: array is empty or index is out of range***");
 //	Queue<T>* queue = new Queue<T>();
 //	for (int i = 0; i < this->data->GetLength(); i++)
 //	{
@@ -178,7 +178,7 @@
 //Queue<T>* Queue<T> ::GetSubQueue(const int start, const int end) const
 //{
 //	if (!this->data->GetLength() || !this->data || start < 0 || start > end || end >= this->data->GetLength())
-//		throw OperationError();
+//		throw InvalidArguments();
 //	Queue<T>* subqueue = new Queue<T>;
 //	subqueue->data = this->data->GetSubsequence(start, end);
 //	return subqueue;
@@ -188,9 +188,9 @@
 //int Queue<T> ::PosOfSubQueue(const Queue<T>& queue) const
 //{
 //	if (!queue.data->GetLength() || !queue.data || !this->data->GetLength() || !this->data)
-//		throw OperationError();
+//		throw InvalidArguments();
 //	if (queue.data->GetLength() > this->data->GetLength())
-//		throw NoneValue(4);
+//		throw NoneValue("***ValueError: there is not value of argument in the array***");
 //	Queue<T>* copy = new Queue<T>(*this);
 //	int index = -1;
 //	T element = queue.data->Get(0);
@@ -202,7 +202,7 @@
 //			if (queue.data->GetLength() > copy->data->GetLength() - i)
 //			{
 //				delete copy;
-//				throw NoneValue(4);
+//				throw NoneValue("***ValueError: there is not value of argument in the array***");
 //			};
 //			for (int k = 1; k < queue.data->GetLength(); k++)
 //			{
@@ -217,7 +217,7 @@
 //	if (index < 0)
 //	{
 //		delete copy;
-//		throw NoneValue(4);
+//		throw NoneValue("***ValueError: there is not value of argument in the array***");
 //	}
 //	else
 //		return index;

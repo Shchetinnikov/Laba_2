@@ -8,7 +8,6 @@
 using namespace std;
 
 
-
 struct Complex
 {
 	double re;
@@ -109,7 +108,7 @@ Complex& operator/(const Complex& value1, const double& value2)
 {
 	if (!value2)
 	{
-		throw OperationError(0, __FILE__, __LINE__);
+		throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
 	}
 	Complex* temp = new Complex();
 	temp->re = value1.re / value2;
@@ -122,7 +121,7 @@ Complex& operator/(const Complex& value1, const Complex& value2)
 {
 	if (!value2.re && !value2.im)
 	{
-		throw OperationError(0, __FILE__, __LINE__);
+		throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
 	}
 	Complex* temp = new Complex();
 	temp->re = (value1.re * value1.re + value2.im * value1.im) / (pow(value2.re, 2) + pow(value2.im, 2));
@@ -245,7 +244,7 @@ void operator>>(istream& in, Complex& ob)
 							in.ignore(1);
 						}
 						in.ignore(1);
-						throw OperationError(0, __FILE__, __LINE__);
+						throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
 					}
 				}
 			}
@@ -254,6 +253,6 @@ void operator>>(istream& in, Complex& ob)
 	}
 	else
 	{
-		throw OperationError(0, __FILE__, __LINE__);
+		throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
 	}
 }
