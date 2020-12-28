@@ -547,49 +547,10 @@ void ShakerSorterTest()
 		PrintData(*origin);
 		AssertEqual(*origin, *expected, __FILE__, __LINE__);
 	}
-}
-
-
-void TreeSorterTest()
-{
-	TreeSorter<int> sorter("LNR");
-	// Пустая послед-ть
+	// Обратно отсортированная послед-ть
 	{
-		Sequence<int>* origin = new ListSequence<int>();
-		try
-		{
-			sorter.Sort(origin);
-			BreakPointer(__FILE__, __LINE__);
-		}
-		catch (NoneValue e)
-		{
-			PrintData(*origin, e);
-		};
-	}
-	// Послед-ть из одного элемента - 1
-	{
-		int arr[1] = { 1 };
-		Sequence<int>* origin = new ListSequence<int>(arr, 1);
-		Sequence<int>* expected = new ListSequence<int>(arr, 1);
-		PrintData(*origin, *expected);
-		sorter.Sort(origin);
-		PrintData(*origin);
-		AssertEqual(*origin, *expected, __FILE__, __LINE__);
-	}
-	// Послед-ть из одного элемента - 2
-	{
-		int arr[5] = { 1, 1, 1, 1, 1, };
-		Sequence<int>* origin = new ListSequence<int>(arr, 5);
-		Sequence<int>* expected = new ListSequence<int>(arr, 5);
-		PrintData(*origin, *expected);
-		sorter.Sort(origin);
-		PrintData(*origin);
-		AssertEqual(*origin, *expected, __FILE__, __LINE__);
-	}
-	// Послед-ть с совпадающими элементами
-	{
-		int arr[6] = { 5, 1, 5, 3, 7, 1 };
-		int exp[6] = { 1, 1, 3, 5, 5, 7 };
+		int arr[6] = { 6, 5, 1, 0, -5, -9 };
+		int exp[6] = { -9, -5, 0, 1, 5, 6 };
 		Sequence<int>* origin = new ListSequence<int>(arr, 6);
 		Sequence<int>* expected = new ListSequence<int>(exp, 6);
 		PrintData(*origin, *expected);
@@ -597,9 +558,9 @@ void TreeSorterTest()
 		PrintData(*origin);
 		AssertEqual(*origin, *expected, __FILE__, __LINE__);
 	}
-	// Послед-ть с отрицательными членами
+	// Прямо отсортированная послед-ть
 	{
-		int arr[6] = { -5, 0, 6, 1, 5, -9 };
+		int arr[6] = { -9, -5, 0, 1, 5, 6 };
 		int exp[6] = { -9, -5, 0, 1, 5, 6 };
 		Sequence<int>* origin = new ListSequence<int>(arr, 6);
 		Sequence<int>* expected = new ListSequence<int>(exp, 6);
@@ -609,6 +570,96 @@ void TreeSorterTest()
 		AssertEqual(*origin, *expected, __FILE__, __LINE__);
 	}
 }
+
+
+//void BinaryTreeSorterTest()
+//{
+//	BinaryTreeSorter<int> sorter("LNR");
+//	// Пустая послед-ть
+//	{
+//		Sequence<int>* origin = new ListSequence<int>();
+//		try
+//		{
+//			sorter.Sort(origin);
+//			BreakPointer(__FILE__, __LINE__);
+//		}
+//		catch (NoneValue e)
+//		{
+//			PrintData(*origin, e);
+//		};
+//	}
+//	// Послед-ть из одного элемента - 1
+//	{
+//		int arr[1] = { 1 };
+//		Sequence<int>* origin = new ListSequence<int>(arr, 1);
+//		Sequence<int>* expected = new ListSequence<int>(arr, 1);
+//		PrintData(*origin, *expected);
+//		sorter.Sort(origin);
+//		PrintData(*origin);
+//		AssertEqual(*origin, *expected, __FILE__, __LINE__);
+//	}
+//	// Послед-ть из одного элемента - 2
+//	{
+//		int arr[5] = { 1, 1, 1, 1, 1, };
+//		Sequence<int>* origin = new ListSequence<int>(arr, 5);
+//		try
+//		{
+//			sorter.Sort(origin);
+//			BreakPointer(__FILE__, __LINE__);
+//		}
+//		catch (InvalidArguments e)
+//		{
+//			PrintData(*origin, e);
+//		};
+//	}
+//	// Послед-ть с совпадающими элементами
+//	{
+//		int arr[6] = { 5, 1, 5, 3, 7, 1 };
+//		Sequence<int>* origin = new ListSequence<int>(arr, 6);
+//		try
+//		{
+//			sorter.Sort(origin);
+//			BreakPointer(__FILE__, __LINE__);
+//		}
+//		catch (InvalidArguments e)
+//		{
+//			PrintData(*origin, e);
+//		};
+//	}
+//	// Послед-ть с отрицательными членами
+//	{
+//		int arr[6] = { -5, 0, 6, 1, 5, -9 };
+//		int exp[6] = { -9, -5, 0, 1, 5, 6 };
+//		Sequence<int>* origin = new ListSequence<int>(arr, 6);
+//		Sequence<int>* expected = new ListSequence<int>(exp, 6);
+//		PrintData(*origin, *expected);
+//		sorter.Sort(origin);
+//		PrintData(*origin);
+//		AssertEqual(*origin, *expected, __FILE__, __LINE__);
+//	}
+//	// Обратно отсортированная послед-ть
+//	{
+//		int arr[6] = { 6, 5, 1, 0, -5, -9 };
+//		int exp[6] = { -9, -5, 0, 1, 5, 6 };
+//		Sequence<int>* origin = new ListSequence<int>(arr, 6);
+//		Sequence<int>* expected = new ListSequence<int>(exp, 6);
+//		PrintData(*origin, *expected);
+//		sorter.Sort(origin);
+//		PrintData(*origin);
+//		AssertEqual(*origin, *expected, __FILE__, __LINE__);
+//	}
+//	// Прямо отсортированная послед-ть
+//	{
+//		int arr[6] = { -9, -5, 0, 1, 5, 6 };
+//		int exp[6] = { -9, -5, 0, 1, 5, 6 };
+//		Sequence<int>* origin = new ListSequence<int>(arr, 6);
+//		Sequence<int>* expected = new ListSequence<int>(exp, 6);
+//		PrintData(*origin, *expected);
+//		sorter.Sort(origin);
+//		PrintData(*origin);
+//		AssertEqual(*origin, *expected, __FILE__, __LINE__);
+//	}
+//}
 
 
 void ShellSorterTest()
@@ -665,9 +716,107 @@ void ShellSorterTest()
 		PrintData(*origin);
 		AssertEqual(*origin, *expected, __FILE__, __LINE__);
 	}
+	// Обратно отсортированная послед-ть
+	{
+		int arr[6] = { 6, 5, 1, 0, -5, -9 };
+		int exp[6] = { -9, -5, 0, 1, 5, 6 };
+		Sequence<int>* origin = new ListSequence<int>(arr, 6);
+		Sequence<int>* expected = new ListSequence<int>(exp, 6);
+		PrintData(*origin, *expected);
+		sorter.Sort(origin);
+		PrintData(*origin);
+		AssertEqual(*origin, *expected, __FILE__, __LINE__);
+	}
+	// Прямо отсортированная послед-ть
+	{
+		int arr[6] = { -9, -5, 0, 1, 5, 6 };
+		int exp[6] = { -9, -5, 0, 1, 5, 6 };
+		Sequence<int>* origin = new ListSequence<int>(arr, 6);
+		Sequence<int>* expected = new ListSequence<int>(exp, 6);
+		PrintData(*origin, *expected);
+		sorter.Sort(origin);
+		PrintData(*origin);
+		AssertEqual(*origin, *expected, __FILE__, __LINE__);
+	}
 }
 
-
+void MergeSorterTest()
+{
+	MergeSorter<int> sorter(AscendingComparer<int>);
+	// Пустая послед-ть
+	{
+		Sequence<int>* origin = new ListSequence<int>();
+		Sequence<int>* expected = new ListSequence<int>();
+		PrintData(*origin, *expected);
+		sorter.Sort(origin);
+		PrintData(*origin);
+		AssertEqual(*origin, *expected, __FILE__, __LINE__);
+	}
+	// Послед-ть из одного элемента - 1
+	{
+		int arr[1] = { 1 };
+		Sequence<int>* origin = new ListSequence<int>(arr, 1);
+		Sequence<int>* expected = new ListSequence<int>(arr, 1);
+		PrintData(*origin, *expected);
+		sorter.Sort(origin);
+		PrintData(*origin);
+		AssertEqual(*origin, *expected, __FILE__, __LINE__);
+	}
+	// Послед-ть из одного элемента - 2
+	{
+		int arr[5] = { 1, 1, 1, 1, 1, };
+		Sequence<int>* origin = new ListSequence<int>(arr, 5);
+		Sequence<int>* expected = new ListSequence<int>(arr, 5);
+		PrintData(*origin, *expected);
+		sorter.Sort(origin);
+		PrintData(*origin);
+		AssertEqual(*origin, *expected, __FILE__, __LINE__);
+	}
+	// Послед-ть с совпадающими элементами
+	{
+		int arr[6] = { 5, 1, 5, 3, 7, 1 };
+		int exp[6] = { 1, 1, 3, 5, 5, 7 };
+		Sequence<int>* origin = new ListSequence<int>(arr, 6);
+		Sequence<int>* expected = new ListSequence<int>(exp, 6);
+		PrintData(*origin, *expected);
+		sorter.Sort(origin);
+		PrintData(*origin);
+		AssertEqual(*origin, *expected, __FILE__, __LINE__);
+	}
+	// Послед-ть с отрицательными членами
+	{
+		int arr[6] = { -5, 0, 6, 1, 5, -9 };
+		int exp[6] = { -9, -5, 0, 1, 5, 6 };
+		Sequence<int>* origin = new ListSequence<int>(arr, 6);
+		Sequence<int>* expected = new ListSequence<int>(exp, 6);
+		PrintData(*origin, *expected);
+		sorter.Sort(origin);
+		PrintData(*origin);
+		AssertEqual(*origin, *expected, __FILE__, __LINE__);
+	}
+	// Обратно отсортированная послед-ть
+	{
+		int arr[6] = { 6, 5, 1, 0, -5, -9 };
+		int exp[6] = { -9, -5, 0, 1, 5, 6 };
+		Sequence<int>* origin = new ListSequence<int>(arr, 6);
+		Sequence<int>* expected = new ListSequence<int>(exp, 6);
+		PrintData(*origin, *expected);
+		sorter.Sort(origin);
+		PrintData(*origin);
+		AssertEqual(*origin, *expected, __FILE__, __LINE__);
+	}
+	// Прямо отсортированная послед-ть
+	{
+		int arr[6] = { -9, -5, 0, 1, 5, 6 };
+		int exp[6] = { -9, -5, 0, 1, 5, 6 };
+		Sequence<int>* origin = new ListSequence<int>(arr, 6);
+		Sequence<int>* expected = new ListSequence<int>(exp, 6);
+		PrintData(*origin, *expected);
+		sorter.Sort(origin);
+		PrintData(*origin);
+		AssertEqual(*origin, *expected, __FILE__, __LINE__);
+	}
+}
 
 
 void TestAll()
@@ -689,6 +838,8 @@ void TestAll()
 
 	PrintHeading("*****'ISorter' testing*****");
 	obj.RunTest(ShakerSorterTest, "ShakerSorterTest");
-	obj.RunTest(TreeSorterTest, "TreeSorterTest");
+	//obj.RunTest(BinaryTreeSorterTest, "BinaryTreeSorterTest");
 	obj.RunTest(ShellSorterTest, "ShellSorterTest");
+	obj.RunTest(MergeSorterTest, "MergeSorterTest");
+
 }

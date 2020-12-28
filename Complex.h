@@ -7,7 +7,6 @@
 
 using namespace std;
 
-
 struct Complex
 {
 	double re;

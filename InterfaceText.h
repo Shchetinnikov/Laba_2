@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include <iostream>
 #include <string>
 #include <map>
@@ -8,7 +7,7 @@
 
 #include "Exception.h"
 #include "ConsoleColors.h"
-#include "IFunctions.h"
+#include "InterfaceFuncs.h"
 
 using namespace std;
 
@@ -18,6 +17,7 @@ using ShowInfFunc = void (*)();
 void ShowCurrentMenu(string& state);
 void ShowMenu();
 void ShowSortMenu();
+void ShowSearchMenu();
 void ShowSortersMenu();
 
 
@@ -25,6 +25,7 @@ map<string, tuple<ShowInfFunc, ExecuteFunc>> allfuncs =
 {
 	{"Menu", {ShowMenu, Menu}},
 	{"SortMenu", {ShowSortMenu, SortMenu}},
+	{"SearchMenu", {ShowSearchMenu, SearchMenu}},
 	{"Sorters", {ShowSortersMenu, SortersMenu}}
 };
 
@@ -51,8 +52,9 @@ void ShowMenu()
 	cout << " Program main menu" << endl;
 	cout << " Choose one of the item:" << endl;
 	cout << "1. Sorting" << endl;
-	cout << "2. Test program" << endl;
-	cout << "3. Exit" << endl;
+	cout << "2. Searching tasks" << endl;
+	cout << "3. Test program" << endl;
+	cout << "4. Exit" << endl;
 	AccessInput();
 
 	SetConsoleTextAttribute(HCONSOLE, (WORD)((Black << 4) | White));
@@ -76,6 +78,24 @@ void ShowSortMenu()
 };
 
 
+void ShowSearchMenu()
+{
+	SetConsoleTextAttribute(HCONSOLE, (WORD)((Black << 4) | Blue));
+
+	cout << "\n==========*SEARCH MENU*==========" << endl;
+	cout << " You've chosen the item 'Searching'" << endl;
+	cout << " Choose one of the task:" << endl;
+	cout << "1. Alphabetical Index" << endl;
+	cout << "2. Cache" << endl;
+	cout << "3. Back" << endl;
+	cout << "4. Exit" << endl;
+	AccessInput();
+
+	SetConsoleTextAttribute(HCONSOLE, (WORD)((Black << 4) | White));
+}
+
+
+
 void ShowSortersMenu()
 {
 	SetConsoleTextAttribute(HCONSOLE, (WORD)((Black << 4) | Blue));
@@ -84,8 +104,9 @@ void ShowSortersMenu()
 	cout << " You've chosen the item 'Sorters'" << endl;
 	cout << " Choose one of algorithm of sorting:" << endl;
 	cout << "1. ShakerSorter" << endl;
-	cout << "2. TreeSorter" << endl;
-	cout << "3. ShellSorter" << endl;
+	//cout << "2. BinaryTreeSorter" << endl;
+	cout << "2. ShellSorter" << endl;
+	cout << "3. MergeSorter" << endl;
 	cout << "4. Back" << endl;
 	cout << "5. Exit" << endl;
 	AccessInput();
@@ -118,8 +139,9 @@ void SorterItems()
 
 	cout << " Choose two different items:" << endl;
 	cout << "1. ShakerSorter" << endl;
-	cout << "2. TreeSorter" << endl;
-	cout << "3. ShellSorter" << endl;
+	//cout << "2. BinaryTreeSorter" << endl;
+	cout << "2. ShellSorter" << endl;
+	cout << "3. MergeSorter" << endl;
 
 	AccessInput();
 }
@@ -141,6 +163,7 @@ void SequenceToCompareItems()
 	cout << "1. Direct sorted" << endl;
 	cout << "2. Reverse sorted" << endl;
 	cout << "3. None sorted" << endl;
+	cout << "4. Generate sequence" << endl;
 	AccessInput();
 }
 

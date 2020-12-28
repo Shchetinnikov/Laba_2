@@ -4,13 +4,14 @@
 #include "Exception.h"
 #include "ConsoleColors.h"
 #include "Sequence.h"
-#include "SequenceGen.h"
+#include "SequenceGenerator.h"
 #include "tests.h"
 #include "CompareSorters.h"
 #include "ExecuteSorter.h"
 
+#include "SearchingTasks.h"
 
-// Interface
+// InterfaceText
 void TypesItems();
 void SequenceItems();
 void SequenceClasses();
@@ -25,9 +26,12 @@ void Menu(string& state, char choice)
 		state = "SortMenu";
 		break;
 	case '2':
-		TestAll();
+		state = "SearchMenu";
 		break;
 	case '3':
+		TestAll();
+		break;
+	case '4':
 		PrintConclusion("\nPROGRAM IS COMPLETED");
 		exit(0);
 		break;
@@ -58,6 +62,27 @@ void SortMenu(string& state, char choice)
 	}
 }
 
+void SearchMenu(string& state, char choice)
+{
+	switch (choice)
+	{
+	case '1':
+		AlphabeticalIndexTask();
+		break;
+	case '2':
+		CacheTask();
+		break;
+	case '3':
+		state = "Menu";
+		break;
+	case '4':
+		PrintConclusion("\nPROGRAM IS COMPLETED");
+		exit(0);
+	default:
+		throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
+	}
+}
+
 
 void SortersMenu(string& state, char choice)
 {
@@ -66,11 +91,14 @@ void SortersMenu(string& state, char choice)
 	case '1':
 		ShakerSort();
 		break;
+	/*case '2':
+		BinaryTreeSort();
+		break;*/
 	case '2':
-		TreeSort();
+		ShellSort();
 		break;
 	case '3':
-		ShellSort();
+		MergeSort();
 		break;
 	case '4':
 		state = "SortMenu";
@@ -147,6 +175,9 @@ void GetSequenceToCompare(Sequence<T>& input)
 		break;
 	case '3':
 		ConstantSequence(input);
+		break;
+	case '4':
+		GenerateSequence(input);
 		break;
 	default:
 		throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);

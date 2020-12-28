@@ -8,106 +8,106 @@
 
 */
 
-
-template <class U, class T>
-struct TreeNode 
-{
-	U key;
-	T data;
-};
-
-template <class U, class T>
-class BinaryTreeNode 
+template<class TKey, class TValue>
+class BinaryTreeNode
 {
 private:
-	TreeNode<U, T> item;
-	BinaryTreeNode<U, T>* left;
-	BinaryTreeNode<U, T>* right;
+	struct Node
+	{
+		TKey key;
+		TValue value;
+	};
+private:
+	Node* item;
+	BinaryTreeNode<TKey, TValue>* left;
+	BinaryTreeNode<TKey, TValue>* right;
 public:
-	BinaryTreeNode(const U& key);
-	BinaryTreeNode(const U& key, const T& data);
-	BinaryTreeNode(const U& key, const T& data, BinaryTreeNode<U, T>* left, BinaryTreeNode<U, T>* right);
+	// конструкторы
+	BinaryTreeNode(const TKey key, const TValue value);
+	BinaryTreeNode(const TKey key, const TValue value, BinaryTreeNode<TKey, TValue>* left, BinaryTreeNode<TKey, TValue>* right);
+	BinaryTreeNode(const BinaryTreeNode<TKey, TValue>& node);
 public:
-	TreeNode<U, T> GetTreeNode() const { return this->item; };
-	BinaryTreeNode<U, T>* GetLeft() const { return this->left; };
-	BinaryTreeNode<U, T>* GetRight() const { return this->right; };
+	// декомпозици€
+	Node GetTreeNode() const  { return *this->item; };
+	BinaryTreeNode<TKey, TValue>* GetLeft() const  { return this->left; };
+	BinaryTreeNode<TKey, TValue>* GetRight() const { return this->right; };
 public:
+	// методы
 	// содержимое узла не измен€етс€
-	void SetLeft(BinaryTreeNode<U, T>* left);
-	void SetRight(BinaryTreeNode<U, T>* right);
+	void SetLeft(BinaryTreeNode<TKey, TValue>* node);
+	void SetRight(BinaryTreeNode<TKey, TValue>* node);
+public:
+	// деструктор
+	~BinaryTreeNode() 
+	{
+		delete item;
+	}
 };
 
 
-/*
-	Ќет проверки уникальности ключей
-*/
 
-template<class U, class T>
-BinaryTreeNode<U, T> ::BinaryTreeNode(const U& key) : left(nullptr), right(nullptr)
+
+template<class TKey, class TValue>
+BinaryTreeNode<TKey, TValue> :: BinaryTreeNode(const TKey key, const TValue value) : left(nullptr), right(nullptr)
 {
-	this->item.key = key;
-}
+	this->item = new Node;
+	this->item->key = key;
+	this->item->value = value;
+};
 
 
-template <class U, class T>
-BinaryTreeNode<U, T> ::BinaryTreeNode(const U& key, const T& data) : left(nullptr), right(nullptr)
+template<class TKey, class TValue>
+BinaryTreeNode<TKey, TValue> ::BinaryTreeNode(const TKey key, const TValue value, BinaryTreeNode<TKey, TValue>* left, BinaryTreeNode<TKey, TValue>* right)
 {
-	this->item.key = key;
-	this->item.data = data;
-}
+	if (left->item.key >= key || right->item.key <= key)
+		throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
 
-
-template <class U, class T>
-BinaryTreeNode<U, T> ::BinaryTreeNode(const U& key, const T& data, BinaryTreeNode<U, T>* left, BinaryTreeNode<U, T>* right)
-{
-	this->item.key = key;
-	this->item.data = data;
+	this->item = new Node;
+	this->item->key = key;
+	this->item->value = value;
 	this->left = left;
 	this->right = right;
+};
+
+
+template<class TKey, class TValue>
+BinaryTreeNode<TKey, TValue> ::BinaryTreeNode(const BinaryTreeNode<TKey, TValue>& node)
+{
+	this->item = new Node;
+	this->item->key = node.item->key;
+	this->item->value = node.item->value;
+	this->left = node.left;
+	this->right = node.right;
 }
 
 
-template <class U, class T>
-void BinaryTreeNode<U, T> ::SetLeft(BinaryTreeNode<U, T>* left)
+template<class TKey, class TValue>
+void BinaryTreeNode<TKey, TValue> :: SetLeft(BinaryTreeNode<TKey, TValue>* node)
 {
-	if (!left)
+	if (!node)
 	{
 		this->left = nullptr;
 		return;
 	};
-	this->left = new BinaryTreeNode<U, T>(left->item.key, left->item.data, left->left, left->right);
+
+	if (node->item->key >= this->item->key)
+		throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
+
+	this->left = node;
 };
 
 
-template <class U, class T>
-void BinaryTreeNode<U, T> ::SetRight(BinaryTreeNode<U, T>* right)
+template<class TKey, class TValue>
+void BinaryTreeNode<TKey, TValue> ::SetRight(BinaryTreeNode<TKey, TValue>* node)
 {
-	if (!right)
+	if (!node)
 	{
 		this->right = nullptr;
 		return;
 	};
-	this->right = new BinaryTreeNode<U, T>(right->item.key, right->item.data, right->left, right->right);
+
+	if (node->item->key <= this->item->key)
+		throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
+
+	this->right = node;
 };
-
-
-
-template<class U, class T>
-void DeleteNode(BinaryTreeNode<U, T>* node) { delete node; };
-
-
-template<class U, class T>
-BinaryTreeNode<U, T>* CopyNode(BinaryTreeNode<U, T>* node)
-{
-	BinaryTreeNode<U, T>* new_node = new BinaryTreeNode<U, T>(node->GetTreeNode().key, node->GetTreeNode().data,
-		node->GetLeft(), node->GetRight());
-	return new_node;
-}
-
-
-template<class U, class T>
-ostream& operator<<(ostream& stream, const BinaryTreeNode<U, T>& node)
-{
-	stream << "{ " << node.GetTreeNode().key << ", " << node.GetTreeNode().data << " }" << endl;
-	return stream;
-}

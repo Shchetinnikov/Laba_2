@@ -1,32 +1,30 @@
 #pragma once
 
-#include <iostream>
-
 #include "Exception.h"
-
-using namespace std;
-
 
 class String
 {
 private:
 	char* items;
-	int length;
+	int count;
+	int capacity;
 public:
-	String(); // строка с нулевый указателем
-	String(const char* str); // пустая строка или копия строки
+	String();
+	String(const char* str);
 	String(const String& str);
 public:
-	//void Print() const;
-	int Length() const { return this->length; }; 
-	char GetLetter(int index) const;
+	char Get(const int index) const;
+	int GetLength() const { return this->count; }; 
+	int GetCapacity() const { return this->capacity; };
+	String GetSubstring(const int start, const int end) const;
+	int GetPos(char item) const;
 public:
-	String operator+ (const String& str2);
-	String operator* (int value);
-	String operator= (const String& str2);
-	bool operator== (const String& str2);
-	bool operator!= (const String& str2);
-	String operator()();
+	String operator+ (const String& str);
+	//String operator* (const int value);
+	String operator= (const String& str);
+	/*bool operator== (const String& str);
+	bool operator!= (const String& str);*/
+	/*String operator()();*/
 	friend ostream& operator<< (ostream &out, const String& str);
 public:
 	~String()
@@ -40,144 +38,205 @@ public:
 
 String::String()
 {
-	this->items = nullptr;
-	this->length = 0;
+	this->items = new char[1];
+	this->items[0] = '\0';
+	this->count = 0;
+	this->capacity = 1;
 };
 
-String :: String(const char* str) : length(0)
+
+String :: String(const char* str)
 {
 	if (!str)
 		throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
-	if (str == "\0")
-	{
-		this->items = new char[1];
-		*(this->items) = '\0';
-		this->length = 1;
-	}
-	else
-	{
-		int i = -1;
-		int str_len = 0;
-		do
-		{
-			i++;
-			str_len++;
-		} while (str[i] != '\0');
 
-		items = new char[str_len];
-		for (i = 0; i < str_len; i++)
-		{
-			items[i] = str[i];
-		};
-		this->length = str_len;
+	int capacity = 0;
+	do
+	{
+		capacity++;
+	} while (str[capacity - 1] != '\0');
+
+	this->items= new char[capacity];
+	for (int index = 0; index < capacity; index++)
+	{
+		this->items[index] = str[index];
 	};
+	this->capacity = capacity;
+	this->count = capacity- 1;
 };
+
+
 
 String :: String(const String& str)
 {
-	if (!str.length || !str.items)
+	if (!str.count || !str.items)
 		throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
-	this->length = str.length;
-	this->items = new char[this->length];
-	for (int i = 0; i < this->length; i++)
-		items[i] = str.items[i];
+
+	this->count = str.count;
+	this->capacity = str.capacity;
+	this->items = new char[this->capacity];
+
+	for (int i = 0; i < this->capacity; i++)
+		this->items[i] = str.items[i];
 };
 
-char String :: GetLetter(int index) const
+
+char String :: Get(const int index) const
 {
-	if (index < 0 || index >= this->length || this->length <= 1 || !this->items)
-		throw IndexOutOfRange("***IndexError: list is empty or index is out of range***", __FILE__, __LINE__);
+	if (index < 0 || index >= this->count || this->count <= 0 || !this->items)
+		throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
+
 	return this->items[index];
-};
-
-String String :: operator+ (const String& str2)
-{
-	if (!this->length || !this->items || !str2.length || !str2.items)
-		throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
-	String* concat = new String;
-	concat->items = new char[this->length - 1 + str2.length];
-	concat->length = this->length - 1 + str2.length;
-	int index;
-	for (index = 0; index < this->length - 1; index++)
-	{
-		concat->items[index] = this->items[index];
-	};
-	for (int i = 0; i < str2.length; i++)
-	{
-		concat->items[index] = str2.items[i];
-		index++;
-	};
-	return *concat;
-};
-
-String String :: operator* (int value)
-{
-	if (value <= 0)
-		throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
-	String result("\0");
-	for (int i = 0; i < value; i++)
-	{
-		result = result + *this;
-	};
-	return result;
-};
-
-String String :: operator= (const String& str2)
-{
-//	if (!this->length || !this->items || !str2.length || !str2.items)
-//  	throw OperationError();
-	delete[] this->items;
-	String* ob = new String(str2);
-	this->items = ob->items;
-	this->length = ob->length;
-	return *this;
-};
-
-bool String :: operator== (const String& str2)
-{
-	if (!this->length || !this->items || !str2.length || !str2.items)
-		throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
-	if (this->length == str2.length)
-	{
-		for (int i = 0; i < this->length; i++)
-		{
-			if (this->items[i] != str2.items[i])
-				return false;
-		};
-	}
-	else
-		return false;
-	return true;
-};
-
-bool String :: operator!= (const String& str2)
-{
-	if (!this->length || !this->items || !str2.length || !str2.items)
-		throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
-	if (this->length == str2.length)
-	{
-		for (int i = 0; i < this->length; i++)
-		{
-			if (this->items[i] != str2.items[i])
-				return true;
-		};
-	}
-	else
-		return true;
-	return false;
-};
-
-String String :: operator() ()
-{
-	return *this;
 }
+
+
+
+String String :: GetSubstring(const int start, const int end) const
+{
+	if (start < 0 || end >= this->count || start > end)
+		throw IndexOutOfRange("***IndexError: array is empty or index is out of range***", __FILE__, __LINE__);
+
+	int i;
+	int index = start;
+	char* str = new char[end - start + 2];
+	
+	for (i = 0; index <= end; index++, i++)
+	{
+		str[i] = this->items[index];
+	}
+	str[i] = '\0';
+
+	String output(str);
+
+	delete[] str;
+	return output;
+};
+
+
+int String :: GetPos(char item) const
+{
+	int index;
+	for(index = 0; index < this->count && this->items[index] != item; index++) {}
+
+	if (this->items[index] == item)
+		return index;
+	else
+		throw IndexOutOfRange("***IndexError: array is empty or index is out of range***", __FILE__, __LINE__);
+
+};
+
+
+
+String String :: operator+ (const String& str)
+{
+	if (!this->count || !this->items || !str.count || !str.items)
+		throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
+	
+	String concat;
+	delete[] concat.items;
+
+	concat.count = this->count + str.count;
+	concat.capacity = this->capacity + str.count;
+	concat.items = new char[this->capacity + str.count];
+
+	int index;
+	for (index = 0; index < this->count; index++)
+	{
+		concat.items[index] = this->items[index];
+	};
+	for (int i = 0; i < str.count; i++, index++)
+	{
+		concat.items[index] = str.items[i];
+	};
+	concat.items[index] = '\0';
+
+	return concat;
+};
+
+
+
+//String String :: operator* (const int value)
+//{
+//	if (value <= 0)
+//		throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
+//	
+//	String result;
+//	delete[] result.items;
+//
+//	for (int i = 0; i < value; i++)
+//	{
+//		result = result + *this;
+//	};
+//
+//	return result;
+//};
+
+
+
+String String :: operator= (const String& str)
+{
+	if (!this->count || !this->items || !str.count || !str.items)
+		throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
+
+	delete[] this->items;
+
+	this->capacity = str.capacity;
+	this->count = str.count;
+	this->items = new char[str.capacity];
+
+	for (int i = 0; i < str.capacity; i++)
+		this->items[i] = str.items[i];
+
+	return *this;
+};
+
+
+//bool String :: operator== (const String& str2)
+//{
+//	if (!this->length || !this->items || !str2.length || !str2.items)
+//		throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
+//	if (this->length == str2.length)
+//	{
+//		for (int i = 0; i < this->length; i++)
+//		{
+//			if (this->items[i] != str2.items[i])
+//				return false;
+//		};
+//	}
+//	else
+//		return false;
+//	return true;
+//};
+//
+//bool String :: operator!= (const String& str2)
+//{
+//	if (!this->length || !this->items || !str2.length || !str2.items)
+//		throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
+//	if (this->length == str2.length)
+//	{
+//		for (int i = 0; i < this->length; i++)
+//		{
+//			if (this->items[i] != str2.items[i])
+//				return true;
+//		};
+//	}
+//	else
+//		return true;
+//	return false;
+//};
+//
+//String String :: operator() ()
+//{
+//	return *this;
+//}
 
 ostream& operator<< (ostream& out, const String& str) 
 {
-	if (!str.length)
+	if (!str.count || !str.items)
 		throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
-	if (str.length > 1)
-		for (int i = 0; i < str.length; i++)
-			out << str.items[i];
+	
+	for (int i = 0; i < str.capacity; i++)
+		out << str.items[i];
+
 	return out;
 };

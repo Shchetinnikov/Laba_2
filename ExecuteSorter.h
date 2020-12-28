@@ -7,11 +7,11 @@
 #include "ISorter.h"
 
 
-//IFunctions
+//InterfaceFuncs
 char ChooseSequence();
 char ChooseType();
 
-// Interface
+// InterfaceText
 int AskOrder();
 
 
@@ -173,120 +173,120 @@ void ShakerSort()
 }
 
 
-void TreeSort()
-{
-	char type_choice = ChooseType();
-	switch (type_choice)
-	{
-	case '1':
-	{
-		Sequence<int>* input = NewSequence<int>();
-		ISorter<int>* sorter;
-
-		if (AskOrder())
-		{
-			ISorter<int>* sorter = new TreeSorter<int>("LNR");
-			Sort(input, sorter);
-			delete sorter;
-		}
-		else
-		{
-			ISorter<int>* sorter = new TreeSorter<int>("RNL");
-			Sort(input, sorter);
-			delete sorter;
-		}
-
-		delete input;
-		break;
-	}
-	case '2':
-	{
-		Sequence<float>* input = NewSequence<float>();
-		ISorter<float>* sorter;
-
-		if (AskOrder())
-		{
-			ISorter<float>* sorter = new TreeSorter<float>("LNR");
-			Sort(input, sorter);
-			delete sorter;
-		}
-		else
-		{
-			ISorter<float>* sorter = new TreeSorter<float>("RNL");
-			Sort(input, sorter);
-			delete sorter;
-		}
-
-		delete input;
-		break;
-	}
-	case '3':
-	{
-		Sequence<double>* input = NewSequence<double>();
-		ISorter<double>* sorter;
-
-		if (AskOrder())
-		{
-			ISorter<double>* sorter = new TreeSorter<double>("LNR");
-			Sort(input, sorter);
-			delete sorter;
-		}
-		else
-		{
-			ISorter<double>* sorter = new TreeSorter<double>("RNL");
-			Sort(input, sorter);
-			delete sorter;
-		}
-
-		delete input;
-		break;
-	}
-	case '4':
-	{
-		Sequence<char>* input = NewSequence<char>();
-		ISorter<char>* sorter;
-
-		if (AskOrder())
-		{
-			ISorter<char>* sorter = new TreeSorter<char>("LNR");
-			Sort(input, sorter);
-			delete sorter;
-		}
-		else
-		{
-			ISorter<char>* sorter = new TreeSorter<char>("RNL");
-			Sort(input, sorter);
-			delete sorter;
-		}
-
-		delete input;
-		break;
-	}
-	case '5':
-	{
-		Sequence<string>* input = NewSequence<string>();
-		ISorter<string>* sorter;
-
-		if (AskOrder())
-		{
-			ISorter<string>* sorter = new TreeSorter<string>("LNR");
-			Sort(input, sorter);
-			delete sorter;
-		}
-		else
-		{
-			ISorter<string>* sorter = new TreeSorter<string>("RNL");
-			Sort(input, sorter);
-			delete sorter;
-		}
-
-		delete input;
-		break;
-	}
-	default:
-		throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
-	}
-}
+//void BinaryTreeSort()
+//{
+//	char type_choice = ChooseType();
+//	switch (type_choice)
+//	{
+//	case '1':
+//	{
+//		Sequence<int>* input = NewSequence<int>();
+//		ISorter<int>* sorter;
+//
+//		if (AskOrder())
+//		{
+//			ISorter<int>* sorter = new BinaryTreeSorter<int>("LNR");
+//			Sort(input, sorter);
+//			delete sorter;
+//		}
+//		else
+//		{
+//			ISorter<int>* sorter = new BinaryTreeSorter<int>("RNL");
+//			Sort(input, sorter);
+//			delete sorter;
+//		}
+//
+//		delete input;
+//		break;
+//	}
+//	case '2':
+//	{
+//		Sequence<float>* input = NewSequence<float>();
+//		ISorter<float>* sorter;
+//
+//		if (AskOrder())
+//		{
+//			ISorter<float>* sorter = new BinaryTreeSorter<float>("LNR");
+//			Sort(input, sorter);
+//			delete sorter;
+//		}
+//		else
+//		{
+//			ISorter<float>* sorter = new BinaryTreeSorter<float>("RNL");
+//			Sort(input, sorter);
+//			delete sorter;
+//		}
+//
+//		delete input;
+//		break;
+//	}
+//	case '3':
+//	{
+//		Sequence<double>* input = NewSequence<double>();
+//		ISorter<double>* sorter;
+//
+//		if (AskOrder())
+//		{
+//			ISorter<double>* sorter = new BinaryTreeSorter<double>("LNR");
+//			Sort(input, sorter);
+//			delete sorter;
+//		}
+//		else
+//		{
+//			ISorter<double>* sorter = new BinaryTreeSorter<double>("RNL");
+//			Sort(input, sorter);
+//			delete sorter;
+//		}
+//
+//		delete input;
+//		break;
+//	}
+//	case '4':
+//	{
+//		Sequence<char>* input = NewSequence<char>();
+//		ISorter<char>* sorter;
+//
+//		if (AskOrder())
+//		{
+//			ISorter<char>* sorter = new BinaryTreeSorter<char>("LNR");
+//			Sort(input, sorter);
+//			delete sorter;
+//		}
+//		else
+//		{
+//			ISorter<char>* sorter = new BinaryTreeSorter<char>("RNL");
+//			Sort(input, sorter);
+//			delete sorter;
+//		}
+//
+//		delete input;
+//		break;
+//	}
+//	case '5':
+//	{
+//		Sequence<string>* input = NewSequence<string>();
+//		ISorter<string>* sorter;
+//
+//		if (AskOrder())
+//		{
+//			ISorter<string>* sorter = new BinaryTreeSorter<string>("LNR");
+//			Sort(input, sorter);
+//			delete sorter;
+//		}
+//		else
+//		{
+//			ISorter<string>* sorter = new BinaryTreeSorter<string>("RNL");
+//			Sort(input, sorter);
+//			delete sorter;
+//		}
+//
+//		delete input;
+//		break;
+//	}
+//	default:
+//		throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
+//	}
+//}
 
 
 void ShellSort()
@@ -392,6 +392,122 @@ void ShellSort()
 		else
 		{
 			ISorter<string>* sorter = new ShellSorter<string>(DescendingComparer<string>);
+			Sort(input, sorter);
+			delete sorter;
+		}
+
+		delete input;
+		break;
+	}
+	default:
+		throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
+	}
+}
+
+void MergeSort()
+{
+	char type_choice = ChooseType();
+	switch (type_choice)
+	{
+	case '1':
+	{
+		Sequence<int>* input = NewSequence<int>();
+		ISorter<int>* sorter;
+
+		if (AskOrder())
+		{
+			ISorter<int>* sorter = new MergeSorter<int>(AscendingComparer<int>);
+			Sort(input, sorter);
+			delete sorter;
+
+		}
+		else
+		{
+			ISorter<int>* sorter = new MergeSorter<int>(DescendingComparer<int>);
+			Sort(input, sorter);
+			delete sorter;
+		}
+
+		delete input;
+		break;
+	}
+	case '2':
+	{
+		Sequence<float>* input = NewSequence<float>();
+		ISorter<float>* sorter;
+
+		if (AskOrder())
+		{
+			ISorter<float>* sorter = new MergeSorter<float>(AscendingComparer<float>);
+			Sort(input, sorter);
+			delete sorter;
+		}
+		else
+		{
+			ISorter<float>* sorter = new MergeSorter<float>(DescendingComparer<float>);
+			Sort(input, sorter);
+			delete sorter;
+		}
+
+		delete input;
+		break;
+	}
+	case '3':
+	{
+		Sequence<double>* input = NewSequence<double>();
+		ISorter<double>* sorter;
+
+		if (AskOrder())
+		{
+			ISorter<double>* sorter = new MergeSorter<double>(AscendingComparer<double>);
+			Sort(input, sorter);
+			delete sorter;
+		}
+		else
+		{
+			ISorter<double>* sorter = new MergeSorter<double>(DescendingComparer<double>);
+			Sort(input, sorter);
+			delete sorter;
+		}
+
+		delete input;
+		break;
+	}
+	case '4':
+	{
+		Sequence<char>* input = NewSequence<char>();
+		ISorter<char>* sorter;
+
+		if (AskOrder())
+		{
+			ISorter<char>* sorter = new MergeSorter<char>(AscendingComparer<char>);
+			Sort(input, sorter);
+			delete sorter;
+		}
+		else
+		{
+			ISorter<char>* sorter = new MergeSorter<char>(DescendingComparer<char>);
+			Sort(input, sorter);
+			delete sorter;
+		}
+
+		delete input;
+		break;
+	}
+	case '5':
+	{
+		Sequence<string>* input = NewSequence<string>();
+		ISorter<string>* sorter;
+
+		if (AskOrder())
+		{
+			ISorter<string>* sorter = new MergeSorter<string>(AscendingComparer<string>);
+			Sort(input, sorter);
+			delete sorter;
+		}
+		else
+		{
+			ISorter<string>* sorter = new MergeSorter<string>(DescendingComparer<string>);
 			Sort(input, sorter);
 			delete sorter;
 		}

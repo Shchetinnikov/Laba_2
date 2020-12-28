@@ -1,17 +1,14 @@
 #pragma once
 
-#include <iostream>
-
 #include "Exception.h"
-#include "Iterators.h"
-
-using namespace std;
+#include "IIterators.h"
 
 	
 template <class T>
 class Sequence : public IIterable<T>
 {
 public:
+	// декомпозиция
 	virtual int GetCapacity() const = 0;
 	virtual int GetLength() const = 0;
 	virtual T GetFirst() const = 0;
@@ -19,6 +16,7 @@ public:
 	virtual T Get(const int i) const = 0;
 	virtual Sequence<T>* GetSubsequence(const int start, const int end) const = 0;
 public:
+	// методы
 	virtual void Append(const T value) = 0;
 	virtual void Prepend(const T value) = 0;
 	virtual void Set(const int index, const T value) = 0;
@@ -30,6 +28,7 @@ public:
 	virtual Sequence<T>* Copy() const = 0;
 	virtual void CopyTo(Sequence<T>* target, const int startIndex) const = 0;
 public:
+	// перегрузка операторов
 	template<class T>
 	friend bool operator!= (const Sequence<T>& lhs, const Sequence<T>& rhs);
 
@@ -41,6 +40,8 @@ public:
 
 	T operator[] (const int index);
 };
+
+
 
 template<class T>
 T Sequence<T>:: operator[](const int index)

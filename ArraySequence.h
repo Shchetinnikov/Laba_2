@@ -1,27 +1,52 @@
 #pragma once
 
-#include <iostream>
-
 #include "Exception.h"
 #include "Sequence.h"
 #include "DynamicArray.h"
 
-using namespace std;
-
 template <class T>
 class ArraySequence : public Sequence<T> {
+private:
+	// класс итератор
+	class ArraySequenceIterator : public IIterator<T>
+	{
+	private:
+		ArraySequence<T>* seq;
+		int currentIndex;
+	public:
+		ArraySequenceIterator(ArraySequence<T>* seq)
+		{
+			this->seq = seq;
+			this->currentIndex = 0;
+		}
+	public:
+		virtual T GetValue() const override { return this->seq->Get(this->currentIndex); }
+		virtual IIterator<T>* Next() override
+		{
+			this->currentIndex++;
+			return this;
+		}
+		virtual bool HasNext() override { return this->currentIndex < this->seq->GetCapacity() - 1; }
+		virtual bool HasValue() override { return this->currentIndex < this->seq->GetLength(); }
+	public:
+		virtual IIterator<T>* Prev() override
+		{
+			this->currentIndex--;
+			return this;
+		}
+		virtual bool HasPrev() override { return this->currentIndex > 0; }
+	};
 private:
 	DynamicArray<T>* data;
 	int count;
 public:
+	// конструкторы
 	ArraySequence(T* items, const int count);
 	ArraySequence(const int count = 0);
 	ArraySequence(const ArraySequence<T>& other);
 public:
-	virtual int GetCapacity() const override
-	{
-		return this->data->GetSize();
-	}
+	// декомпозиция
+	virtual int GetCapacity() const override;
 	virtual int GetLength() const override;
 	virtual T GetFirst() const override;
 	virtual T GetLast() const override;
@@ -30,6 +55,7 @@ public:
 	bool HasValue(const int index) const;
 	bool TryGetValue(const int index, T& value) const;
 public:
+	// методы
 	virtual void Append(const T value) override;
 	virtual void Prepend(const T value) override;
 	virtual void Set(const int index, const T value) override;
@@ -41,11 +67,13 @@ public:
 	virtual Sequence<T>* Concat(const Sequence<T>& other) const override;
 	virtual void CopyTo(Sequence<T>* target, const int startIndex) const override;
 public:
+	// итератор
 	virtual IIterator<T>* GetIterator() override
 	{
-		return new ArraySequenceIterator<T>(this);;
+		return new ArraySequenceIterator(this);;
 	}
 public:
+	// деструкторы
 	~ArraySequence();
 };
 
@@ -79,6 +107,14 @@ ArraySequence<T> ::ArraySequence(const ArraySequence<T>& other)
 	this->count = other.count;
 	this->data = new DynamicArray<T>(*(other.data));
 };
+
+
+template <class T>
+int ArraySequence<T> :: GetCapacity() const
+{
+	return this->data->GetSize();
+}
+
 
 template <class T>
 int ArraySequence<T> ::GetLength() const

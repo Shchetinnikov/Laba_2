@@ -1,10 +1,6 @@
 #pragma once
 
-#include <iostream>
-
 #include "Exception.h"
-
-using namespace std;
 
 template <typename T>
 struct Node

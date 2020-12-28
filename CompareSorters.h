@@ -4,14 +4,14 @@
 
 #include "Exception.h"
 #include "Sequence.h"
-#include "SequenceGen.h"
+#include "SequenceGenerator.h"
 #include "ISorter.h"
 #include "ExecuteSorter.h"
 
-// Interface
+// InterfaceText
 void SorterItems();
 
-//IFunctions
+//InterfaceFuncs
 char ChooseType();
 
 template<class T>
@@ -34,7 +34,7 @@ char* CompareSortersItems()
 			in.ignore(1);
 		}
 		cin >> *(pair + i);
-		if (*(pair + i) < '1' || *(pair + i) > '3')
+		if (*(pair + i) < '1' || *(pair + i) > '4')
 		{
 			in.str("");
 			throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
@@ -54,11 +54,25 @@ void CompareSorters(ISorter<T>* sorter1, ISorter<T>* sorter2, Sequence<T>* input
 {
 	Sequence<T>* copy = input->Copy();
 
+	cout << "Sequence length: " << input->GetLength() << endl;
+	PrintSequence(*input, "\nInitial data:\n");
+
 	PrintHeading("\nFirst sorter output:");
-	Sort(input, sorter1);
+
+	sorter1->Sort(input);
+
+	PrintSequence(*input, "\nSorter result:\n");
+
 
 	PrintHeading("\nSecond sorter output:");
-	Sort(copy, sorter2);
+
+	sorter2->Sort(copy);
+
+	PrintSequence(*copy, "\nSorter result:\n");
+
+	cout << "\nConclusion:" << endl << endl;
+	cout << "Running time (First sorter): " << sorter1->GetTimerValue() << " milliseconds" << endl;
+	cout << "Running time (Second sorter): " << sorter2->GetTimerValue() << " milliseconds" << endl;
 
 	delete input;
 	delete copy;
@@ -86,21 +100,21 @@ ISorter<T>* GetFirstSorter(const char* pair, const int order)
 		}
 		
 	}
-	case '2':
+	/*case '2':
 	{
 		if (order)
 		{
-			ISorter<T>* sorter = new TreeSorter<T>("LNR");
+			ISorter<T>* sorter = new BinaryTreeSorter<T>("LNR");
 			return sorter;
 		}
 		else
 		{
-			ISorter<T>* sorter = new TreeSorter<T>("RNL");
+			ISorter<T>* sorter = new BinaryTreeSorter<T>("RNL");
 			return sorter;
 		}
 
-	}
-	case '3':
+	}*/
+	case '2':
 	{
 		if (order)
 		{
@@ -110,6 +124,20 @@ ISorter<T>* GetFirstSorter(const char* pair, const int order)
 		else
 		{
 			ISorter<T>* sorter = new ShellSorter<T>(DescendingComparer<T>);
+			return sorter;
+		}
+	}
+	case '3':
+	{
+		if (order)
+		{
+			ISorter<T>* sorter = new MergeSorter<T>(AscendingComparer<T>);
+			return sorter;
+
+		}
+		else
+		{
+			ISorter<T>* sorter = new MergeSorter<T>(DescendingComparer<T>);
 			return sorter;
 		}
 	}
@@ -138,20 +166,20 @@ ISorter<T>* GetSecondSorter(const char* pair, const int order)
 			return sorter;
 		}
 	}
-	case '2':
+	/*case '2':
 	{
 		if (order)
 		{
-			ISorter<T>* sorter = new TreeSorter<T>("LNR");
+			ISorter<T>* sorter = new BinaryTreeSorter<T>("LNR");
 			return sorter;
 		}
 		else
 		{
-			ISorter<T>* sorter = new TreeSorter<T>("RNL");
+			ISorter<T>* sorter = new BinaryTreeSorter<T>("RNL");
 			return sorter;
 		}
-	}
-	case '3':
+	}*/
+	case '2':
 	{
 		if (order)
 		{
@@ -161,6 +189,20 @@ ISorter<T>* GetSecondSorter(const char* pair, const int order)
 		else
 		{
 			ISorter<T>* sorter = new ShellSorter<T>(DescendingComparer<T>);
+			return sorter;
+		}
+	}
+	case '3':
+	{
+		if (order)
+		{
+			ISorter<T>* sorter = new MergeSorter<T>(AscendingComparer<T>);
+			return sorter;
+
+		}
+		else
+		{
+			ISorter<T>* sorter = new MergeSorter<T>(DescendingComparer<T>);
 			return sorter;
 		}
 	}

@@ -72,19 +72,19 @@ public:
 };
 
 
-template <class U>
-class TreeSorter: public ISorter<U> 
-{
-private:
-    string mode;
-public:
-    TreeSorter(const string& mode)
-    {
-        this->mode = mode;
-    }
-public:
-    virtual void Sort(Sequence<U>* input) override;
-};
+//template <class T>
+//class BinaryTreeSorter: public ISorter<T> 
+//{
+//private:
+//    string order;
+//public:
+//    BinaryTreeSorter(const string& order)
+//    {
+//        this->order = order;
+//    }
+//public:
+//    virtual void Sort(Sequence<T>* input) override;
+//};
 
 
 template <class T>
@@ -99,6 +99,20 @@ public:
     virtual void Sort(Sequence<T>* input) override;
 };
 
+
+template <class T>
+class MergeSorter : public ISorter<T>
+{
+protected:
+    void MergeRecursive(Sequence<T>* input, int left, int middle, int right);
+public:
+    MergeSorter(int (*cmp)(T, T))
+    {
+        this->cmp = cmp;
+    }
+public:
+    virtual void Sort(Sequence<T>* input) override;
+};
 
 
 template<class T>
@@ -142,36 +156,39 @@ void ShakerSorter<T>::Sort(Sequence<T>* input)
 }
 
 
-template <class U>
-void TreeSorter<U> ::Sort(Sequence<U>* input)
-{
-    typedef void* T;
-    if (!input || (this->mode != "LNR" && this->mode != "RNL"))
-        throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
-
-    auto start = system_clock::now();
-
-    BinaryTree<U, T> tree;
-    BinaryTreeNode<U, T>* node;
-    Sequence<BinaryTreeNode<U, T>*>* thread;
-    for (int i = 0; i < input->GetLength(); i++)
-    {
-        node = new BinaryTreeNode<U, T>(input->Get(i));
-        tree.Insert(node);
-    }
-
-    tree.Thread(this->mode);
-   
-    thread = tree.GetThread();
-    for (int i = 0; i < thread->GetLength(); i++)
-    {
-        input->Set(i, thread->Get(i)->GetTreeNode().key);
-    }
-
-    auto finish = system_clock::now();
-    duration<double> elapsed = finish - start;
-    this->timer = elapsed.count() * 1000;
-}
+//template <class T>
+//void BinaryTreeSorter<T> ::Sort(Sequence<T>* input)
+//{
+//    typedef void* U;
+//    if (!input || (this->order != "LNR" && this->order != "RNL"))
+//        throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
+//
+//    auto start = system_clock::now();
+//
+//    U value = nullptr;
+//    BinaryTree<T, U> tree;
+//    BinaryTreeNode<T, U>* node;
+//    Sequence<BinaryTreeNode<T, U>*>* stitched;
+//    
+//    for (int i = 0; i < input->GetLength(); i++)
+//    {
+//        node = new BinaryTreeNode<T, U>(input->Get(i), value);
+//        if(!tree.Insert(node))
+//            throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
+//    }
+//
+//    tree.Stitch(this->order);
+//   
+//    stitched = tree.GetStitched();
+//    for (int i = 0; i < stitched->GetLength(); i++)
+//    {
+//        input->Set(i, stitched->Get(i)->GetTreeNode().key);
+//    }
+//
+//    auto finish = system_clock::now();
+//    duration<double> elapsed = finish - start;
+//    this->timer = elapsed.count() * 1000;
+//}
 
 
 template<class T>
@@ -275,3 +292,74 @@ void ShellSorter<T> ::Sort(Sequence<T>* input)
     duration<double> elapsed = finish - start;
     this->timer = elapsed.count() * 1000;
 }
+
+
+template<class T>
+void MergeSorter<T>::Sort(Sequence<T>* input)
+{
+    if (!input)
+        throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
+
+    auto start = system_clock::now();
+
+    int i_length = input->GetLength();
+    if (i_length > 1)
+    {
+        MergeRecursive(input, 0, i_length / 2, i_length);
+    }
+
+    auto finish = system_clock::now();
+    duration<double> elapsed = finish - start;
+    this->timer = elapsed.count() * 1000;
+}
+
+
+
+template<class T>
+void MergeSorter<T> ::MergeRecursive(Sequence<T>* input, int left, int middle, int right)
+{
+    if (right - left > 1)
+    {
+        // получаем 2 отсортированные части
+        MergeRecursive(input, left, left + (middle - left) / 2, middle);
+        MergeRecursive(input, middle, middle + (right - middle) / 2, right);
+
+        int ind_l = 0; // индекс левой части
+        int ind_r = 0; // индекс правой части
+        
+        Sequence<T>* result = new ArraySequence<T>(right - left);
+
+        while (left + ind_l < middle && middle + ind_r < right)
+        {
+            if (this->cmp(input->Get(left + ind_l), input->Get(middle + ind_r)) == 1)
+            {
+                result->Set(ind_l + ind_r, input->Get(middle + ind_r));
+                ind_r++;
+            }
+            else
+            {
+                result->Set(ind_l + ind_r, input->Get(left + ind_l));
+                ind_l++;
+            }
+        }
+            
+        while (left + ind_l < middle)
+        {
+            result->Set(ind_l + ind_r, input->Get(left + ind_l));
+            ind_l++;
+        }
+
+        while (middle + ind_r < right)
+        {
+            result->Set(ind_l + ind_r, input->Get(middle + ind_r));
+            ind_r++;
+        }
+
+        for (int i = 0; i < result->GetLength(); i++)
+        {
+            input->Set(left + i, result->Get(i));
+        }
+
+        delete result;
+    }
+};

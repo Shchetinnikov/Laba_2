@@ -1,13 +1,8 @@
 #pragma once
 
-#include <iostream>
-
 #include "Exception.h"
 #include "Sequence.h"
 #include "LinkedList.h"
-
-using namespace std;
-
 
 template <class T>
 class ListSequence : public Sequence<T> {
@@ -237,5 +232,5 @@ void ListSequence<T> ::CopyTo(Sequence<T>* target, int startIndex) const
 template <class T>
 ListSequence<T> ::~ListSequence()
 {
-	delete[] this->data;
+	delete this->data;
 };

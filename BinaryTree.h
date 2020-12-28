@@ -1,136 +1,184 @@
 #pragma once
 
-#include <exception>
-#include <iostream>
 #include <string>
 
+#include "Exception.h"
 #include "Sequence.h"
 #include "ListSequence.h"
 #include "BinaryTreeNode.h"
 
-using namespace std;
-
 /*
 	Бинарное дерево поиска
-	Полное упорядочивание с отношением родетель-дочерний узел (Ключи не повторяются):
-		- левое поддерево <= корень
-		- правое поддерево > корень
-
 */
 
 
-template <class U, class T>
-class BinaryTree 
+template <class TKey, class TValue>
+class BinaryTree
 {
 private:
-	BinaryTreeNode<U, T>* root;
-	Sequence<BinaryTreeNode<U, T>*>* thread;										// прошитое дерево
+	BinaryTreeNode<TKey, TValue>* root;
+	Sequence<BinaryTreeNode<TKey, TValue>*>* stitched;
+	int count;
 protected:																		
-	// вспомогательные функции рекурсивного вызова
-	BinaryTreeNode<U, T>* GetParent(BinaryTreeNode<U, T>* child, BinaryTreeNode<U, T>* start, string& place);
-	BinaryTreeNode<U, T>* MapRecursive(BinaryTreeNode<U, T>* node, BinaryTreeNode<U, T>* (*mfun)(BinaryTreeNode<U, T>*));
-	void WhereRecursive(BinaryTreeNode<U, T>* start, BinaryTree<U, T>* result, bool (*wfun)(BinaryTreeNode<U, T>*));
-	void InsertRecursive(BinaryTreeNode<U, T>* node, BinaryTreeNode<U, T>* start);
-	void ThreadRecursive(BinaryTreeNode<U, T>* start, Sequence<BinaryTreeNode<U, T>*>* seq, const string order);
+	// функции рекурсивного вызова
+	void BinaryTreeBuilder(BinaryTreeNode<TKey, TValue>* tree_node, BinaryTreeNode<TKey, TValue>* node);
+	void BinaryTreeCleaner(BinaryTreeNode<TKey, TValue>* node);
+protected:
+	// функции рекурсивного вызова
+	BinaryTreeNode<TKey, TValue>* GetNode(const TKey& key, BinaryTreeNode<TKey, TValue>* start) const;
+	int GetSize(BinaryTreeNode< TKey, TValue>* node) const;
+	BinaryTreeNode<TKey, TValue>* GetParent(BinaryTreeNode<TKey, TValue>* child, BinaryTreeNode<TKey, TValue>* start) const;
+	bool Find(const TKey& key, BinaryTreeNode<TKey, TValue>* start) const;
+	bool AssertEqual(BinaryTreeNode<TKey, TValue>* node1, BinaryTreeNode<TKey, TValue>* node2) const;
+	bool Insert(BinaryTreeNode<TKey, TValue>* node, BinaryTreeNode < TKey, TValue>* start);
+	BinaryTreeNode<TKey, TValue>* Map(BinaryTreeNode<TKey, TValue>* node, BinaryTreeNode<TKey, TValue>* (*mfun)(BinaryTreeNode<TKey, TValue>*)) const;
+	void Where(BinaryTreeNode<TKey, TValue>* start, BinaryTree<TKey, TValue>* result, bool (*wfun)(BinaryTreeNode<TKey, TValue>*)) const;
+	TValue Reduce(BinaryTreeNode<TKey, TValue>* node, TValue(*rfun)(TValue, TValue), const TValue& value, const string order) const;
+	void Stitch(BinaryTreeNode<TKey, TValue>* start, Sequence<BinaryTreeNode<TKey, TValue>*>* seq, const string order);
 public:	
 	// конструкторы
-	BinaryTree() { this->root = nullptr; this->thread = nullptr; };					// пустое дерево
-	BinaryTree(const BinaryTree<U, T>& btree);										// копирующий конструктор
+	BinaryTree() : root(nullptr), stitched(nullptr), count(0) {};													
+	BinaryTree(const BinaryTree<TKey, TValue>& tree);													
 public: 
-	// декомпозиция 
-	BinaryTreeNode<U, T>* GetRoot() const 
-	{ 
-		return this->root; 
-	};
-	Sequence<BinaryTreeNode<U, T>*>* GetThread() const 
-	{ 
-		return this->thread; 
-	};
-	BinaryTreeNode<U, T>* GetNode(const U& key, BinaryTreeNode<U, T>* start) const;
-	BinaryTree<U, T>* GetSubTree(const U& key, BinaryTreeNode<U, T>* start) const;
-	bool Find(const U& key, BinaryTreeNode<U, T>* start) const;
-	bool FindSubTree(BinaryTree<U, T>* subtree) const;
+	// декомпозиция
+	BinaryTreeNode<TKey, TValue>* GetRoot() const {	return this->root; 	};
+	Sequence<BinaryTreeNode<TKey, TValue>*>* GetStitched() const { return this->stitched; };
+	BinaryTreeNode<TKey, TValue>* GetNode(const TKey& key) const { return GetNode(key, this->root);	};
+	BinaryTreeNode<TKey, TValue>* GetParent(BinaryTreeNode<TKey, TValue>* child) const { return this->GetParent(child, this->root); };
+	BinaryTree<TKey, TValue>* GetSubTree(const TKey& key) const;
+	int GetSize() { return this->count; };
+	bool Find(const TKey& key) const {	return Find(key, this->root); };
+	bool FindSubTree(BinaryTree<TKey, TValue>* subtree) const;
 public: 
-	// операции над деревом
-	void Round(BinaryTreeNode<U, T>* start, void (*visit)(BinaryTreeNode<U, T>*), const string order = "NLR");
-	void Insert(BinaryTreeNode<U, T>* node);
-	void Insert(const U& key, const T& item);
-	bool RemoveNode(const U& key);																	// ЛОМАЕТСЯ НА УДАЛЕНИИ КОРНЯ
-	bool RemoveNode(BinaryTreeNode<U, T>* node);													//		
-	bool RemoveSubTree(const U& rootkey);
-	//BinaryTree<U, T>* AvlTree(const string order = "NLR") const;									
-	BinaryTree<U, T>* Map(BinaryTreeNode<U, T>* (*mfun)(BinaryTreeNode<U, T>*)) const;
-	BinaryTree<U, T>* Where(bool (*wfun)(BinaryTreeNode<U, T>*)) const;
-	T Reduce(T(*rfun)(T, T), const T& startvalue, const string order = "NLR") const;
-	void Thread(const string order = "NLR");
-	//Sequence<BinaryTreeNode<U, T>*>* ConvertToSequence(const string order = "NLR") const;			
+	// методы
+	void Round(BinaryTreeNode<TKey, TValue>* start, void (*visit)(BinaryTreeNode<TKey, TValue>*), const string order = "NLR") const;
+	bool Insert(BinaryTreeNode<TKey, TValue>* node);
+	bool Insert(const TKey& key, const TValue& item);
+	BinaryTree<TKey, TValue>* Map(BinaryTreeNode<TKey, TValue>* (*mfun)(BinaryTreeNode<TKey, TValue>*)) const;
+	BinaryTree<TKey, TValue>* Where(bool (*wfun)(BinaryTreeNode<TKey, TValue>*)) const;
+	TValue Reduce(TValue(*rfun)(TValue, TValue), const TValue& startvalue, const string order = "NLR") const;
+	void Stitch(const string order = "NLR");
+	Sequence<BinaryTreeNode<TKey, TValue>*>* ConvertToSequence(const string order = "NLR") const;			
+	bool RemoveSubTree(const TKey& rootkey);
+	bool RemoveNode(const TKey& key);																	
+	bool RemoveNode(BinaryTreeNode<TKey, TValue>* node);
+	
+	//BinaryTree<T>* Avl(const string order = "NLR") const;									
 public:
 	// деструктор
-	~BinaryTree() {
-		if (this->root)
-		{
-			Round(this->root, DeleteNode, "LRN");
-		}
-		if (thread)
-		{
-			delete thread;
-		}
+	~BinaryTree()
+	{
+		if(this->root)
+			BinaryTreeCleaner(this->root);
+
+		if (stitched)
+			delete stitched;
 	}
 };
 
 
-template <class U, class T>
-BinaryTree<U, T> ::BinaryTree(const BinaryTree<U, T>& btree) : root(nullptr), thread(nullptr)
+
+
+template <class TKey, class TValue>
+void BinaryTree<TKey, TValue> ::BinaryTreeBuilder(BinaryTreeNode<TKey, TValue>* tree_node, BinaryTreeNode<TKey, TValue>* node)
 {
-	this->root = MapRecursive(btree.GetRoot(), CopyNode);
-}
+	node = new BinaryTreeNode<TKey, TValue>(tree_node->GetTreeNode().key, tree_node->GetTreeNode().value);
+
+	if (tree_node->GetLeft())
+		BinaryTreeBuilder(tree_node->GetLeft(), node->GetLeft());
+
+	if (tree_node->GetRight())
+		BinaryTreeBuilder(tree_node->GetRight(), node->GetRight());
+};
 
 
-template <class U, class T>
-BinaryTreeNode<U, T>* BinaryTree<U, T> ::GetNode(const U& key, BinaryTreeNode<U, T>* start) const
+template <class TKey, class TValue>
+void BinaryTree<TKey, TValue> ::BinaryTreeCleaner(BinaryTreeNode<TKey, TValue>* node)
+{
+	if (!node->GetLeft() && !node->GetRight())
+		delete node;
+
+	if (node->GetLeft())
+		BinaryTreeCleaner(node->GetLeft());
+
+	if (node->GetRight())
+		BinaryTreeCleaner(node->GetRight());
+};
+
+
+template <class TKey, class TValue>
+BinaryTree<TKey, TValue> ::BinaryTree(const BinaryTree<TKey, TValue>& tree) : root(nullptr)
+{
+	if (!tree.root)
+		throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
+
+	BinaryTreeBuilder(tree.root, this->root);
+
+	this->stitched = nullptr;
+	this->count = tree.count;
+};
+
+
+template <class TKey, class TValue>
+BinaryTreeNode<TKey, TValue>* BinaryTree<TKey, TValue> ::GetNode(const TKey& key, BinaryTreeNode<TKey, TValue>* start) const
 {
 	if (!start)
-	{
 		return nullptr;
-	}
+	
 	if (start->GetTreeNode().key == key)
-	{
 		return start;
-	}
-	BinaryTreeNode<U, T>* left = GetNode(key, start->GetLeft());
-	BinaryTreeNode<U, T>* right = GetNode(key, start->GetRight());
+	
+	BinaryTreeNode<TKey, TValue>* left = GetNode(key, start->GetLeft());
+	BinaryTreeNode<TKey, TValue>* right = GetNode(key, start->GetRight());
+	
 	if (left)
-	{
 		return left;
-	}
+	
 	if (right)
-	{
 		return right;
-	}
+	
 	return nullptr;
 }
 
 
-template <class U, class T>
-BinaryTree<U, T>* BinaryTree<U, T> ::GetSubTree(const U& key, BinaryTreeNode<U, T>* start) const
+template <class TKey, class TValue>
+BinaryTree<TKey, TValue>* BinaryTree<TKey, TValue> ::GetSubTree(const TKey& key) const
 {
-	BinaryTree<U, T>* btree = new BinaryTree<U, T>();
-	btree->root = this->GetNode(key, start);
-	BinaryTree<U, T>* subtree = new BinaryTree<U, T>(*btree);
-	btree->root = nullptr;
-	delete btree;
-	return subtree;
+	BinaryTree<TKey, TValue>* tree = new BinaryTree<TKey, TValue>();
+	tree->root = this->GetNode(key);
+	tree->count = GetSize(tree->root);
+
+	return tree;
 }
 
+template<class TKey, class TValue>
+int BinaryTree<TKey, TValue> ::GetSize(BinaryTreeNode< TKey, TValue>* node) const
+{
+	int size = 0;
 
-template <class U, class T>
-bool BinaryTree<U, T> ::Find(const U& key, BinaryTreeNode<U, T>* start) const
+	if (!node)
+		return size;
+	else
+		size++;
+
+	if (node->GetLeft())
+		size += GetSize(node->GetLeft());
+	
+	if (node->GetRight())
+		size += GetSize(node->GetRight());
+	
+	return size;
+};
+
+
+template <class TKey, class TValue>
+bool BinaryTree<TKey, TValue> ::Find(const TKey& key, BinaryTreeNode<TKey, TValue>* start) const
 {
 	string order = "NLR";
+	
 	if (!start)
-	{
 		return false;
-	}
+	
 	for (int i = 0; i < order.size(); i++)
 		switch (order[i])
 		{
@@ -153,56 +201,62 @@ bool BinaryTree<U, T> ::Find(const U& key, BinaryTreeNode<U, T>* start) const
 			}
 			break;
 		};
+
 	return false;
 }
 
 
-template <class U, class T>
-bool BinaryTree<U, T> ::FindSubTree(BinaryTree<U, T>* subtree) const
+template <class TKey, class TValue>
+bool BinaryTree<TKey, TValue> ::FindSubTree(BinaryTree<TKey, TValue>* tree) const
 {
-	if (!subtree->root)
-	{
-		throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
-	}
-	if (!this->root)
-	{
+	if (!tree->root)
 		return false;
-	}
-	BinaryTree<U, T>* btree = new BinaryTree<U, T>(*this);							// копия
-	btree->Thread();
-	subtree->Thread();
-	BinaryTreeNode<U, T>* start = subtree->GetThread()->GetFirst();
-	BinaryTreeNode<U, T>* item;
-	BinaryTreeNode<U, T>* node;
-	bool flag = false;
-	for (int i = 0; i < btree->GetThread()->GetLength(); i++)
+
+	if (!this->root)
+		return false;
+
+	TKey rootkey = tree->GetRoot()->GetTreeNode().key;
+	TValue rootvalue = tree->GetRoot()->GetTreeNode().value;
+
+	BinaryTreeNode<TKey, TValue>* node = this->GetNode(rootkey);
+
+	if (node->GetTreeNode().key == rootkey && node->GetTreeNode().value == rootvalue)
 	{
-		item = btree->GetThread()->Get(i);
-		if (start->GetTreeNode().key == item->GetTreeNode().key && start->GetTreeNode().data == item->GetTreeNode().data)
-		{
-			flag = true;
-			for (int k = 1; k < subtree->GetThread()->GetLength(); k++)
-			{
-				item = btree->GetThread()->Get(i + k);
-				node = subtree->GetThread()->Get(k);
-				if (node->GetTreeNode().data != item->GetTreeNode().data || node->GetTreeNode().key != item->GetTreeNode().key)
-				{
-					flag = false;
-					break;
-				}
-			}
-			break;
-		};
-	};
-	return flag;
+		BinaryTree<TKey, TValue>* subtree = this->GetSubTree(rootkey);
+		return AssertEqual(tree->root, subtree->root);
+	}
+	else
+		return false;
 }
 
+template<class TKey, class TValue>
+bool BinaryTree<TKey, TValue> ::AssertEqual(BinaryTreeNode<TKey, TValue>* node1, BinaryTreeNode<TKey, TValue>* node2) const
+{
+	if (!node1 && !node2)
+		return true;
 
-template <class U, class T>
-void BinaryTree<U, T> ::Round(BinaryTreeNode<U, T>* start, void (*visit)(BinaryTreeNode<U, T>*), const string order)
+	if (!node1 || !node2)
+		return false;
+
+	TKey key1 = node1->GetTreeNode().key;
+	TValue value1 = node1->GetTreeNode().value;
+	TKey key2 = node2->GetTreeNode().key;;
+	TValue value2 = node2->GetTreeNode().value;;
+	
+	if (key1 == key2 && value1 == value2)
+		return (AssertEqual(node1->GetLeft(), node2->GetLeft()) && AssertEqual(node1->GetRight(), node2->GetRight()));
+	else
+		return false;
+};
+
+
+
+template <class TKey, class TValue>
+void BinaryTree<TKey, TValue> ::Round(BinaryTreeNode<TKey, TValue>* start, void (*visit)(BinaryTreeNode<TKey, TValue>*), const string order) const
 {
 	if (!start)
 		return;
+
 	for (int i = 0; i < order.size(); i++)
 		switch (order[i])
 		{
@@ -221,321 +275,353 @@ void BinaryTree<U, T> ::Round(BinaryTreeNode<U, T>* start, void (*visit)(BinaryT
 }
 
 
-template <class U, class T>
-void BinaryTree<U, T> ::Insert(BinaryTreeNode<U, T>* node)
+template <class TKey, class TValue>
+bool BinaryTree<TKey, TValue> ::Insert(BinaryTreeNode<TKey, TValue>* node)
 {
 	if (!node)
 		throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
+	
 	if (!this->root)
 	{
-		this->root = new BinaryTreeNode<U, T>(node->GetTreeNode().key, node->GetTreeNode().data,
-			node->GetLeft(), node->GetRight());
-		return;
-	};
-	InsertRecursive(node, this->root);
-}
-
-
-template <class U, class T>
-void BinaryTree<U, T> ::Insert(const U& key, const T& item)
-{
-	BinaryTreeNode<U, T>* node = new BinaryTreeNode<U, T>(key, item);
-	this->Insert(node);
-}
-
-
-template <class U, class T>
-bool BinaryTree<U, T> ::RemoveNode(BinaryTreeNode<U, T>* node)
-{
-	BinaryTreeNode<U, T>* node_f = this->GetNode(node->GetTreeNode().key, this->root);
-	if (!(node_f && node_f->GetTreeNode().data == node->GetTreeNode().data))
-		return false;
-	string place = "";
-	BinaryTreeNode<U, T>* left = node_f->GetLeft();
-	BinaryTreeNode<U, T>* right = node_f->GetRight();
-	BinaryTreeNode<U, T>* parent = GetParent(node_f, this->root, place);
-	if (!left && !right) {
-		if (parent)
-			if (place == "left")
-				parent->SetLeft(nullptr);
-			else
-				parent->SetRight(nullptr);
-		delete node_f;
+		this->root = node;
+		this->count++;
 		return true;
 	};
-	if (left) {
-		while (left->GetRight())
-			left = left->GetRight();
-		if (!left->GetLeft() && !left->GetRight()) {
-			string place_left = "";
-			BinaryTreeNode<U, T>* parent_left = GetParent(left, node_f, place_left);
-			if (place_left == "left")
-				parent_left->SetLeft(nullptr);
-			else
-				parent_left->SetRight(nullptr);
-			if (parent) {
-				if (place == "left") {
-					parent->SetLeft(left);
-					delete left;
-					parent->GetLeft()->SetLeft(node_f->GetLeft());
-					parent->GetLeft()->SetRight(node_f->GetRight());
-				}
-				if (place == "right") {
-					parent->SetRight(left);
-					delete left;
-					parent->GetRight()->SetLeft(node_f->GetLeft());
-					parent->GetRight()->SetRight(node_f->GetRight());
-				}
-			}
-			else {
-				left->SetLeft(node_f->GetLeft());
-				left->SetRight(node_f->GetRight());
-			}
-			if (node_f->GetLeft())
-				delete node_f->GetLeft();
-			if (node_f->GetRight())
-				delete node_f->GetRight();
-			delete node_f;
-			return true;
-		};
-	};
-	if (right) {
-		while (right->GetLeft())
-			right = right->GetLeft();
-		if (!right->GetLeft() && !right->GetRight()) {
-			string place_right = "";
-			BinaryTreeNode<U, T>* parent_right = GetParent(right, node_f, place_right);
-			if (place_right == "left")
-				parent_right->SetLeft(nullptr);
-			else
-				parent_right->SetRight(nullptr);
-			if (parent) {
-				if (place == "left") {
-					parent->SetLeft(right);
-					delete right;
-					parent->GetLeft()->SetLeft(node_f->GetLeft());
-					parent->GetLeft()->SetRight(node_f->GetRight());
-				}
-				if (place == "right") {
-					parent->SetRight(right);
-					delete right;
-					parent->GetRight()->SetLeft(node_f->GetLeft());
-					parent->GetRight()->SetRight(node_f->GetRight());
-				}
-			}
-			else {
-				right->SetLeft(node_f->GetLeft());
-				right->SetRight(node_f->GetRight());
-			}
-			if (node_f->GetLeft())
-				delete node_f->GetLeft();
-			if (node_f->GetRight())
-				delete node_f->GetRight();
-			delete node_f;
-			return true;
-		};
-	};
+
+	if (Insert(node, this->root))
+	{
+		this->count++;
+		return true;
+	}
 	return false;
 }
 
 
-template <class U, class T>
-bool BinaryTree<U, T> ::RemoveNode(const U& key)
+template <class TKey, class TValue>
+bool BinaryTree<TKey, TValue> ::Insert(const TKey& key, const TValue& item)
 {
-	BinaryTreeNode<U, T>* node = this->GetNode(key, this->root);
-	if (!node)
-	{
-		return false;
-	}
-	return this->RemoveNode(node);
+	BinaryTreeNode<TKey, TValue>* node = new BinaryTreeNode<TKey, TValue>(key, item);
+	return this->Insert(node);
 }
 
 
-template <class U, class T>
-bool BinaryTree<U, T> ::RemoveSubTree(const U& rootkey)
+template <class TKey, class TValue>
+bool BinaryTree<TKey, TValue>::Insert(BinaryTreeNode<TKey, TValue>* node, BinaryTreeNode<TKey, TValue>* start)
 {
-	string place = "";
-	BinaryTreeNode<U, T>* node = this->GetNode(rootkey, this->root);
-	if (!node)
-	{
+	if (!node || !start)
 		return false;
-	}
-	BinaryTreeNode<U, T>* parent = GetParent(node, this->root, place);
-	Round(node, DeleteNode, "LRN");
-	if (parent)
+
+	if (start->GetTreeNode().key > node->GetTreeNode().key)
 	{
-		if (place == "left")
+		if (!start->GetLeft())
 		{
-			parent->SetLeft(nullptr);
+			start->SetLeft(node);
+			return true;
+		}
+		else
+			return Insert(node, start->GetLeft());
+	};
+	if (start->GetTreeNode().key < node->GetTreeNode().key)
+	{
+		if (!start->GetRight())
+		{
+			start->SetRight(node);
+			return true;
+		}
+		else
+			return Insert(node, start->GetRight());
+	}
+	return false;
+}
+
+
+
+template <class TKey, class TValue>
+bool BinaryTree<TKey, TValue> ::RemoveNode(BinaryTreeNode<TKey, TValue>* node)
+{
+	return this->RemoveNode(node->GetTreeNode().key);
+}
+
+
+template <class TKey, class TValue>
+bool BinaryTree<TKey, TValue> ::RemoveNode(const TKey& key)
+{
+	BinaryTreeNode<TKey, TValue>* node = this->GetNode(key, this->root);
+	
+	if (!node)
+		return false;
+
+	BinaryTreeNode<TKey, TValue>* parent = this->GetParent(node);
+
+	// Нет дочерних узлов
+	if (!node->GetLeft() && !node->GetRight())
+	{
+		if (parent)
+		{
+			if (parent->GetLeft()->GetTreeNode().key == node->GetTreeNode().key)
+			{
+				parent->SetLeft(nullptr);
+			}
+			else
+			{
+				parent->SetRight(nullptr);
+			}
+		}
+	}
+
+	// Есть один дочерний узел
+	if ((node->GetLeft() && !node->GetRight()) || (!node->GetLeft() && node->GetRight()))
+	{
+		BinaryTreeNode<TKey, TValue>* node_child = node->GetLeft() ? node->GetLeft(): node->GetRight();
+		if (parent)
+		{
+			if (parent->GetLeft()->GetTreeNode().key == node->GetTreeNode().key)
+			{
+				parent->SetLeft(node_child);
+			}
+			else
+			{
+				parent->SetRight(node_child);
+			}
 		}
 		else
 		{
-			parent->SetRight(nullptr);
+			this->root = node_child;
 		}
 	}
+
+	// Есть два дочерних узла
+		// Поиск справа/слева подходящего родительского узла
+	if (node->GetLeft() && node->GetRight())
+	{
+		BinaryTreeNode<TKey, TValue>* vice_node = node->GetRight();
+		while (vice_node->GetLeft())
+		{
+			vice_node = vice_node->GetLeft();
+		}
+
+		BinaryTreeNode<TKey, TValue>* vice_node_parent = this->GetParent(vice_node);
+		if (!vice_node->GetRight())
+		{
+			if (vice_node_parent->GetLeft()->GetTreeNode().key == vice_node->GetTreeNode().key)
+			{
+				vice_node_parent->SetLeft(nullptr);
+			}
+			else
+			{
+				vice_node_parent->SetRight(nullptr);
+			}
+		}
+		else
+		{
+			if (vice_node_parent->GetLeft()->GetTreeNode().key == node->GetTreeNode().key)
+			{
+				vice_node_parent->SetLeft(vice_node->GetRight());
+			}
+			else
+			{
+				parent->SetRight(vice_node->GetRight());
+			}
+		}
+
+		if (parent)
+		{
+			if (parent->GetLeft()->GetTreeNode().key == node->GetTreeNode().key)
+			{
+				parent->SetLeft(vice_node);
+			}
+			else
+			{
+				parent->SetRight(vice_node);
+			}
+		}
+		else
+		{
+			this->root = vice_node;
+		}
+		vice_node->SetLeft(node->GetLeft());
+		vice_node->SetRight(node->GetRight());
+	}
+
+	this->count--;
+	delete node;
 	return true;
 }
 
 
-//template <class U, class T>
-//BinaryTree<U, T>* BinaryTree<U, T> :: AvlTree(const string order) const {
-//
-//}
-
-
-template <class U, class T>
-BinaryTree<U, T>* BinaryTree<U, T> ::Map(BinaryTreeNode<U, T>* (*mfun)(BinaryTreeNode<U, T>*)) const
+template <class TKey, class TValue>
+bool BinaryTree<TKey, TValue> ::RemoveSubTree(const TKey& rootkey)
 {
-	BinaryTree<U, T>* new_btree = new BinaryTree<U, T>();
-	new_btree->root = MapRecursive(this->root, mfun);
-	new_btree->thread = nullptr;
-	return new_btree;
+	BinaryTreeNode<TKey, TValue>* node = this->GetNode(rootkey);
+
+	if (!node)
+		return false;
+
+	if (this->root->GetTreeNode().key == rootkey)
+	{
+		this->root = nullptr;
+	}
+	else
+	{
+		BinaryTreeNode<TKey, TValue>* parent = this->GetParent(node, this->root);
+	
+		if (parent->GetLeft()->GetTreeNode().key == rootkey)
+			parent->SetLeft(nullptr);
+		else
+			parent->SetRight(nullptr);
+	}
+
+	BinaryTreeCleaner(node);
+
+	if (this->stitched)
+		delete this->stitched;
+	
+	this->count = this->GetSize(this->root);
+	
+	return true;
 }
 
 
-template <class U, class T>
-BinaryTree<U, T>* BinaryTree<U, T> ::Where(bool (*wfun)(BinaryTreeNode <U, T>*)) const
+template <class TKey, class TValue>
+BinaryTree<TKey, TValue>* BinaryTree<TKey, TValue> ::Map(BinaryTreeNode<TKey, TValue>* (*mfun)(BinaryTreeNode<TKey, TValue>*)) const
 {
-	BinaryTree<U, T>* result = new BinaryTree<U, T>();
-	WhereRecursive(this->root, result, wfun);
+	BinaryTree<TKey, TValue>* new_tree = new BinaryTree<TKey, TValue>();
+	new_tree->root = Map(this->root, mfun);
+	new_tree->count = this->count;
+	return new_tree;
+}
+
+
+template <class TKey, class TValue>
+BinaryTree<TKey, TValue>* BinaryTree<TKey, TValue> ::Where(bool (*wfun)(BinaryTreeNode <TKey, TValue>*)) const
+{
+	BinaryTree<TKey, TValue>* result = new BinaryTree<TKey, TValue>();
+	Where(this->root, result, wfun);
+	result->count = GetSize(result->root);
 	return result;
 }
 
 
-template <class U, class T>
-void BinaryTree<U, T> ::Thread(const string order)
+
+template <class TKey, class TValue>
+TValue BinaryTree<TKey, TValue> ::Reduce(TValue(*rfun)(TValue, TValue), const TValue& startvalue, const string order) const
 {
 	if (!this->root)
-	{
-		throw NoneValue("***ValueError: there is not value of argument in the binary tree***", __FILE__, __LINE__);
-	}
-	Sequence<BinaryTreeNode<U, T>*>* seq = new ListSequence<BinaryTreeNode<U, T>*>();
-	ThreadRecursive(this->root, seq, order);
-	this->thread = seq;
+		return 0;
+
+	return Reduce(this->root, rfun, startvalue, order);
 }
 
-template <class U, class T>
-T BinaryTree<U, T> ::Reduce(T(*rfun)(T, T), const T& startvalue, const string order) const
+
+
+template <class TKey, class TValue>
+void BinaryTree<TKey, TValue> ::Stitch(const string order)
 {
-	BinaryTree<U, T>* btree = new BinaryTree<U, T>(*this);
-	btree->Thread(order);
-	int i = 0;
-	while (i < btree->thread->GetLength())
-	{
-		startvalue = rfun(btree->thread->Get(i)->GetTreeNode().data, startvalue);
-		i++;
-	}
-	delete btree;
-	return startvalue;
+	if (!this->root)
+		throw NoneValue("***ValueError: there is not value of argument in the binary tree***", __FILE__, __LINE__);
+
+	Sequence<BinaryTreeNode<TKey, TValue>*>* seq = new ListSequence<BinaryTreeNode<TKey, TValue>*>();
+	this->Stitch(this->root, seq, order);
+	this->stitched = seq;
 }
 
 
-//template <class U, class T>
-//Sequence<BinaryTreeNode<U, T>*>* BinaryTree<U, T> :: ConvertToSequence(const string order) const {
-//	BinaryTree<U, T>* btree = new BinaryTree<U, T>(*this);
-//	btree->Thread(order);
-//	ListSequence<BinaryTreeNode<U, T>*>* list;
-//	list = static_cast<ListSequence<BinaryTreeNode<U, T>*>*>(btree->GetThread());
-//	Sequence<BinaryTreeNode<U, T>*>* seq = new ListSequence<BinaryTreeNode<U, T>*>(*list);
-//	delete btree;
-//	return seq;
-//}
+template <class TKey, class TValue>
+Sequence<BinaryTreeNode<TKey, TValue>*>* BinaryTree<TKey, TValue> :: ConvertToSequence(const string order) const 
+{
+	Sequence<BinaryTreeNode<TKey, TValue>*>* seq = new ListSequence<BinaryTreeNode<TKey, TValue>*>();
+	this->Stitch(this->root, seq, order);
+	return seq;
+}
 
 
-
-
-template <class U, class T>
-BinaryTreeNode<U, T>* BinaryTree<U, T>::GetParent(BinaryTreeNode<U, T>* child, BinaryTreeNode<U, T>* start, string& place)
+template <class TKey, class TValue>
+BinaryTreeNode<TKey, TValue>* BinaryTree<TKey, TValue>::GetParent(BinaryTreeNode<TKey, TValue>* child, BinaryTreeNode<TKey, TValue>* start) const
 {
 	if (!child || !start)
-	{
 		return nullptr;
-	}
+
 	if (!start->GetLeft() && !start->GetRight())
-	{
 		return nullptr;
-	}
+
+	TKey childkey = child->GetTreeNode().key;
+		
 	if (start->GetLeft())
 	{
-		if (start->GetLeft()->GetTreeNode().key == child->GetTreeNode().key)
-		{
-			place = "left";
+		if (start->GetLeft()->GetTreeNode().key == childkey)
 			return start;
-		};
-		BinaryTreeNode<U, T>* left = GetParent(child, start->GetLeft(), place);
+		
+		BinaryTreeNode<TKey, TValue>* left = GetParent(child, start->GetLeft());
 		if (left)
-		{
 			return left;
-		}
 	};
+
 	if (start->GetRight())
 	{
-		if (start->GetRight()->GetTreeNode().key == child->GetTreeNode().key)
-		{
-			place = "right";
+		if (start->GetRight()->GetTreeNode().key == childkey)
 			return start;
-		};
-		BinaryTreeNode<U, T>* right = GetParent(child, start->GetRight(), place);
+		
+		BinaryTreeNode<TKey, TValue>* right = GetParent(child, start->GetRight());
 		if (right)
-		{
 			return right;
-		}
 	};
+
 	return nullptr;
 }
 
 
-template <class U, class T>
-BinaryTreeNode<U, T>* BinaryTree<U, T>::MapRecursive(BinaryTreeNode<U, T>* node, BinaryTreeNode<U, T>* (*mfun)(BinaryTreeNode<U, T>*))
+
+template <class TKey, class TValue>
+BinaryTreeNode<TKey, TValue>* BinaryTree<TKey, TValue>::Map(BinaryTreeNode<TKey, TValue>* node, BinaryTreeNode<TKey, TValue>* (*mfun)(BinaryTreeNode<TKey, TValue>*)) const
 {
-	string order = "NLR";
-	BinaryTreeNode<U, T>* new_node = nullptr;
 	if (!node)
-	{
 		return nullptr;
-	}
+	
+	string order = "NLR";
+	BinaryTreeNode<TKey, TValue>* new_node = nullptr;
+
 	for (int i = 0; i < order.size(); i++)
-	{
 		switch (order[i])
 		{
 		case 'N':
 			new_node = mfun(node);
 			break;
 		case 'L':
-			new_node->SetLeft(MapRecursive(node->GetLeft(), mfun));
+			new_node->SetLeft(Map(node->GetLeft(), mfun));
 			break;
 		case 'R':
-			new_node->SetRight(MapRecursive(node->GetRight(), mfun));
+			new_node->SetRight(Map(node->GetRight(), mfun));
 			break;
 		default:
 			throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
 		}
-	}
+	
 	return new_node;
 }
 
 
-template <class U, class T>
-void BinaryTree<U, T>::WhereRecursive(BinaryTreeNode<U, T>* node, BinaryTree<U, T>* result, bool (*wfun)(BinaryTreeNode<U, T>*))
+template <class TKey, class TValue>
+void BinaryTree<TKey, TValue>::Where(BinaryTreeNode<TKey, TValue>* node, BinaryTree<TKey, TValue>* result, bool (*wfun)(BinaryTreeNode<TKey, TValue>*)) const
 {
-	string order = "NLR";
 	if (!node)
-	{
-		return;
-	}
+		return; 
+	
+	string order = "NLR";
+	
 	for (int i = 0; i < order.size(); i++)
 		switch (order[i]) {
 		case 'N':
-			if (wfun(node)) {
-				BinaryTreeNode<U, T>* new_node = new BinaryTreeNode<U, T>(node->GetTreeNode().key, node->GetTreeNode().data);
+			if (wfun(node)) 
+			{
+				BinaryTreeNode<TKey, TValue>* new_node = new BinaryTreeNode<TKey, TValue>(node->GetTreeNode().key, node->GetTreeNode().value);
 				result->Insert(new_node);
 			};
 			break;
 		case 'L':
-			WhereRecursive(node->GetLeft(), result, wfun);
+			Where(node->GetLeft(), result, wfun);
 			break;
 		case 'R':
-			WhereRecursive(node->GetRight(), result, wfun);
+			Where(node->GetRight(), result, wfun);
 			break;
 		default:
 			throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
@@ -543,10 +629,41 @@ void BinaryTree<U, T>::WhereRecursive(BinaryTreeNode<U, T>* node, BinaryTree<U, 
 }
 
 
-template <class U, class T>
-void BinaryTree<U, T>::ThreadRecursive(BinaryTreeNode<U, T>* node, Sequence<BinaryTreeNode<U, T>*>* seq, const string order) {
+template<class TKey, class TValue>
+TValue BinaryTree<TKey, TValue> :: Reduce(BinaryTreeNode<TKey, TValue>* node, TValue(*rfun)(TValue, TValue), const TValue& value, const string order) const
+{
+	if (!node)
+		return 0;
+	
+	int result = 0;
+
+	for (int i = 0; i < size(order); i++)
+		switch (order[i])
+		{
+		case 'N':
+			TValue node_value = node->GetTreeNode().value;
+			result += rfun(value, node_value);
+			break;
+		case 'L':
+			result += Reduce(node->GetLeft(), rfun, result, order);
+			break;
+		case 'R':
+			result += Reduce(node->GetRight(), rfun, result, order);
+			break;
+		default:
+			throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
+		}
+
+	return result;
+}
+
+
+template <class TKey, class TValue>
+void BinaryTree<TKey, TValue>::Stitch(BinaryTreeNode<TKey, TValue>* node, Sequence<BinaryTreeNode<TKey, TValue>*>* seq, const string order) 
+{
 	if (!node)
 		return;
+
 	for (int i = 0; i < order.size(); i++)
 	{
 		switch (order[i])
@@ -555,46 +672,13 @@ void BinaryTree<U, T>::ThreadRecursive(BinaryTreeNode<U, T>* node, Sequence<Bina
 			seq->Append(node);
 			break;
 		case 'L':
-			ThreadRecursive(node->GetLeft(), seq, order);
+			Stitch(node->GetLeft(), seq, order);
 			break;
 		case 'R':
-			ThreadRecursive(node->GetRight(), seq, order);
+			Stitch(node->GetRight(), seq, order);
 			break;
 		default:
 			throw InvalidArguments("***InvalidArguments: invalid meanings of arguments***", __FILE__, __LINE__);
 		}
 	}
 }
-
-
-template <class U, class T>
-void BinaryTree<U, T>::InsertRecursive(BinaryTreeNode<U, T>* node, BinaryTreeNode<U, T>* start)
-{
-	if (!node || !start)
-	{
-		return;
-	}
-	if (start->GetTreeNode().key >= node->GetTreeNode().key)
-	{
-		if (!start->GetLeft())
-		{
-			start->SetLeft(node);
-		}
-		else
-		{
-			InsertRecursive(node, start->GetLeft());
-		}
-	};
-	if (start->GetTreeNode().key < node->GetTreeNode().key)
-	{
-		if (!start->GetRight())
-		{
-			start->SetRight(node);
-		}
-		else
-		{
-			InsertRecursive(node, start->GetRight());
-		}
-	}
-}
-

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <iostream>
 #include <string>
 #include <limits>
 #include <random>
@@ -8,7 +7,7 @@
 #include "Exception.h"
 #include "Sequence.h"
 #include "ConsoleColors.h"
-#include "Interface.h"
+#include "InterfaceText.h"
 
 using namespace std;
 

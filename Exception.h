@@ -1,12 +1,10 @@
 #pragma once
 
 #include <sstream>
-#include <iostream>
 #include <exception>
 #include <map>
 
 using namespace std;
-
 
 class Exception: public exception {
 protected:

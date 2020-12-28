@@ -1,10 +1,12 @@
 #pragma once
 
+
 template<class T>
 class Sequence;
 
 template<class T>
 class ArraySequence;
+
 
 
 template<class T>
@@ -49,12 +51,58 @@ public:
 //	^					
 
 
+// Итератор для структуры данных - страницы (блоки) типа ListSequence<ArraySequence<T>*>*
+template<class T>
+class SwitchableIterator : public IIterator<T>
+{
+private:
+	Sequence<Sequence<T>*>* seqs;
+	int seqsCount;
+	int currentSeqIndex = -1;
+	IIterator<T>* currentIterator = nullptr;
+public:
+	SwitchableIterator(Sequence<Sequence<T>*>* seqs, int count) // передаем набор коллекций
+	{
+		this->seqs = seqs;
+		this->seqsCount = count;
+	}
+
+	virtual IIterator<T>* operator++() override
+	{
+		if (this->currentSeqIndex)
+			this->currentSeqIndex = 0;
+
+		while (this->seqs->Get(this->currentSeqIndex)->GetLength() == 0 && this->currentSeqIndex < this->seqsCount)
+			this->currentSeqIndex++;
+
+		if (this->currentSeqIndex < this->seqsCount)
+		{
+			// set HasValue = false;
+			// set HasNext = false;
+			return this;
+		}
+		this->currentIterator = this->seqs->Get(this->currentSeqIndex)->GetIterator();
+		return this;
+	}
+
+	virtual T GetValue() const
+	{
+		if (this->currentIterator)
+			return this->currentIterator->GetValue();
+		throw 1;
+	}
+};
+
+
 template<class T>
 class IIterable
 {
 public:
 	virtual IIterator<T>* GetIterator() = 0;
 };
+
+
+
 
 
 template<class T>
@@ -67,34 +115,3 @@ void IteratorUsageSample()
 
 	}
 }
-
-
-template<class T>
-class ArraySequenceIterator : public IIterator<T>
-{
-private:
-	ArraySequence<T>* seq;
-	int currentIndex;
-public:
-	ArraySequenceIterator(ArraySequence<T>* seq)
-	{
-		this->seq = seq;
-		this->currentIndex = 0;
-	}
-public:
-	virtual T GetValue() const override { return this->seq->Get(this->currentIndex); }
-	virtual IIterator<T>* Next() override
-	{
-		this->currentIndex++;
-		return this;
-	}
-	virtual bool HasNext() override { return this->currentIndex < this->seq->GetCapacity() - 1; }
-	virtual bool HasValue() override { return this->currentIndex < this->seq->GetLength(); }
-public:
-	virtual IIterator<T>* Prev() override
-	{
-		this->currentIndex--;
-		return this;
-	}
-	virtual bool HasPrev() override { return this->currentIndex > 0; }
-};
